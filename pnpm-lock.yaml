@@ -2,9 +2,11 @@ lockfileVersion: 5.3
 
 specifiers:
   astro: ^0.22.3
+  sass: ^1.45.2
 
 devDependencies:
   astro: 0.22.3
+  sass: 1.45.2
 
 packages:
 

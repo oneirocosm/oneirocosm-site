@@ -8,7 +8,7 @@ import Tour from '../components/Tour.astro';
 // You can write any JavaScript/TypeScript that you'd like here.
 // It will run during the build, but never in the browser.
 // All variables are available to use in the HTML template below.
-let title = 'My Astro Site';
+let title = 'oneirocosm';
 
 // Full Astro Component Syntax:
 // https://docs.astro.build/core-concepts/astro-components/
@@ -37,11 +37,16 @@ let title = 'My Astro Site';
 		<header>
 			<div>
 				<img width="60" height="80" src="/assets/logo.svg" alt="Astro logo">
-				<h1>Welcome to <a href="https://astro.build/">Astro</a></h1>
+				<h1>Welcome to { title }!</h1>
+				<h5>Built with <a href="https://astro.build/">Astro</a></h5>
 			</div>
 		</header>
 
-		<Tour />
+		This is my personal website.  It's very much a work in progress, so please excuse the mess.  In the meantime, here are a few things you can look at.
+		<ul>
+			<li><a href="./articles/creating-this-website">Creating This Website</a></li>	
+			<li><a href="./articles/the-nintendo-switch-battery-fiasco">The Nintendo Switch Battery Fiasco</a></li>	
+		</ul>
 
 		<!--
 
