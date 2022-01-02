@@ -1,13 +1,9 @@
 ---
 import { Markdown } from 'astro/components';
+import MainLayout from '../../layouts/MainLayout.astro';
 ---
-
-<head>
-        <meta charset="UTF-8" />
-        <title>Temp</title>
-        <meta name="viewport" content="width=device-width" />
-    </head>
-<article>
+<MainLayout>
+<article class="prose lg:prose-xl dark:prose-dark">
 <Markdown>
 # Why Make a Website
 I've wanted to create a personal website for a long time.  I'm sure plenty of other people share that sentiment.  And I'm sure many of them also found reasons to keep putting it off time and time again.  I don't want to count the number of excuses I've made in the process.  "I need to get better at web design first."  "It will take up too much time."  "It won't be good enough."  And so on&mdash;plenty of excuses, but not a lot of progress.
@@ -70,3 +66,5 @@ Anyway, from there, the next thing to do was to actually write posts.  So, I beg
 # Components
 </Markdown>
 </article>
+
+</MainLayout>
