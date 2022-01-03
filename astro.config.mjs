@@ -5,7 +5,8 @@ export default {
   public: 'static',   // A folder of static files Astro will copy to the root. Useful for favicons, images, and other files that don’t need processing.
   dist: 'public',       // When running `astro build`, path to final static output
   buildOptions: {
-    site: 'https://oneirocosm.com',           // Your public domain, e.g.: https://my-site.dev/. Used to generate sitemaps and canonical URLs.
+    //site: 'https://oneirocosm.com',           // Your public domain, e.g.: https://my-site.dev/. Used to generate sitemaps and canonical URLs.
+    site: '',
     sitemap: true,         // Generate sitemap (set to "false" to disable)
   },
   devOptions: {
