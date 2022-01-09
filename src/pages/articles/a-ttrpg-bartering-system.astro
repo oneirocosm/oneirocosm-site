@@ -1,0 +1,90 @@
+---
+import { Markdown } from 'astro/components';
+import MainLayout from '../../layouts/MainLayout.astro';
+---
+
+<MainLayout>
+<article class="prose lg:prose-xl dark:prose-dark">
+<Markdown>
+Note: If you just want to see the mechanics, skip to the end.
+
+I've been on a TTRPG break for a bit, but Interstitial Season 3 hitting suddenly has really brought me back into it.  I keep thinking about how a lot of systems hit close to what I want but don't quite get there entirely&mdash;and I'm sure that's a fairly universal experience for most people.  It's probably impossible to find a system that's exactly what you want.  And on top of that, if you did, that system wouldn't be right for other people, or maybe even yourself in the future.  Opinions change with time, after all.  Still, I figured I'd humor myself and try to outline something that aligns with a lot of my thoughts.
+
+# Inspiration by the Apocalypse
+So, what does this outline look like?  Well, let's start by looking at a few things that hit close as a start.  First up is PbtA (Powered by the Apocalypse) systems.  If you aren't familiar, these systems are inspired by a game called "Apocalypse World."  They involve rolling 2d6 + some modifier (typically ranging from -2 to +3) depending on the character's stats.  Character's use a playbook which is similar to a "character class" but it comes with specific moves that help focus the character into specific actions.  When rolling, a result of 6 or less is a miss&mdash;which often results in the GM (called the "facilitator" in many of these games, but the role is very similar) taking a "move" of some sort against the players.  A roll of 10 or more means a full success where the player accomplishes what they want&mdash;there may be some side-effect depending on the move, but it overall ends up much more beneficial to the player.  The interesting area covers the roles between 7 and 9 inclusive; this area is called a partial success.  In this zone, the player may accomplish a lesser version of what they were trying, but at the cost of some drawback coming from the GM.
+
+This dice system is at the heart of PbtA games and I think it works incredibly well for a few reasons.  First, it means that on average, the player will roll a mixed success.  This is because when multiple dice are rolled, the result follows a "bell-curve" of sorts.  This is a bit of an oversimplification since the probability curve only gets more bell-like as more dice are added.  With two dice, it really looks more like a tent than a curve, but the idea still applies.
+
+Anyway, this makes 7 the statistically most likely result of a 2d6 roll.  It will be rolled roughly 16.67% of the time.  An 8 would be rolled 13.89% of the time and this continues dropping the farther you get from 7, with a result of 12 happening only 2.78% of the time.  Note that this distribution is mirrored, so the odds of rolling a 6 are the same as the odds of rolling an 8, and the odds of rolling a two (snake eyes) are the same as the odds of rolling a 12 (boxcars).  I won't go into too much more detail here, but there is plenty of other information if you're interested.
+
+Theoretically, it is possible to make this curve more bell-like by adding more dice, but there's a tradeoff there.  The more dice added, the bigger the numbers you're working with.  And with bigger numbers, there's more complicated arithmetic which risks slowing the game down.  So sticking with only two dice sidesteps this complexity and helps streamline it, so players have an easier time focusing on the story.
+
+The next PbtA idea that really works for me is centering the partial success.  It creates a really interesting dilemma for the player.  Do I want to avoid unintended consequences?  Or do I want to be exceptionally effective in what I'm doing at the cost of something else bad happening.  This is the area where PbtA shines the most for me.  It gives the GM an interesting place to add consequences for actions, and they often tend to flow together in ways that are incredibly interesting.  For instance, if the player decides to be overly effective but at the cost of a consequence, the GM may not actually have to do much to add that consequence.  Instead, the player states what they want that extra effectiveness to look like, and a natural consequence will fall out of that.  As an example, maybe the player is so focused in their goal, that they ignore some other risk that is posed to the rest of the party.
+
+# Shortcomings of the Apocalypse
+So, with all of that being said, there are a few things about PbtA that don't quite work for me.  And to be fair, some of these things may not be part of PbtA itself, but they are things that tend to come out of it in the systems that use it.  The first, is the use of "Harm clocks" for characters.  To be clear, I like clocks for systems, they are really interesting, and they help round off some of the times when clear decisions aren't available.  And I also think character death can be very interesting to explore in the TTRPG space.  That being said, I don't particularly like the two being tied together.
+
+Like I said, character death can be very interesting&mdash;but I do believe the time and circumstances need to be right for it.  A random stray shot of a gun killing a character in the first session of a game isn't very interesting to me.  And while some may argue that it's realistic, I'm not really looking for that sort of realism in my games.  Alternatively, you could put a character out of commission when the clock goes down, but I personally would rather tie that to circumstances as opposed to a mechanical system.  To be honest, I'm not 100% sure what that looks like in practice, but it's something I'd like to see innovated on in the future.
+
+Another issue is that it's possible for a player's moves to cover a narrower set of actions than I'd like.  And I do believe that this one is fairly specific to me.  Because my ADHD brain will come up with the most out-there solutions to a problem, and I will latch onto it, even if it isn't necessarily aligned with the moves my character has available.  Typically, a PbtA system will get around this by providing a sort of catch-all move that will handle these corner-cases.  As an example, Interstitial provides the "Push Through Stress" move to handle this.
+
+And it is a good thing that these moves are provided&mdash;player's and GMs would be left high and dry without them.  But these moves often aren't as robust as I'd like them to be.  They are intentionally left vague to handle multiple situations, but this makes them a lot less adaptable to the situation at hand.  In an ideal world, I would prefer a move that can account for the variability in the situation and allow players to use it as is appropriate to the situation.
+
+One final shortcoming is the issue of failure.  PbtA does its best to make failure interesting by embracing the idea of fail forward&mdash;that is, the idea that failure pushes the story forward instead of grinding it to a halt.  That being said, it struggles to incentivize failure.  It often provides XP to players when they fail roles, but I've often found that it isn't enough to encourage players to embrace that result.
+
+The best alternative to this I've seen comes from Dream Askew / Dream Apart.  In these systems, the player will choose to "fail" by performing a weak move.  This provides the player with a token that they can later spend to be able to use a strong move.  If weak moves are not performed, players will never have access to their strong moves, so they have to embrace weak moves in order to progress the story.  Which has the additional benefit creating a story that follows the sort of pattern put forth in Hamlet's Hit Points, but that's a topic for another time.
+
+# My Alternatives
+So, this begs the question of what my alternative would look like in practice.  To which I answer that I don't know for sure, but I can certainly take a guess.  After all, systems require a lot of playtesting to fine-tune, and I'm kind of flying by the seat of my pants right now.  Not to mention, I'm not too keen on planning out the nuance of a complete system at the moment.  This would often involve typing an settings, archetypes, and other ideas to make it more taylored to a specific experience&mdash;and I don't have any of those ideas in mind at the moment.  So I'll just be creating a general framework that hopefully a system could be built on top of.
+
+## Dice Mechanics
+Overall, I think the 2d6 mechanic is a great way to do dice.  For one, it's pretty accessible as 6-sided dice are pretty easy to find.  Not to mention, the numbers form a pretty good range already.  But I'd ideally like to use this mechanic in a slightly different way&mdash;I'd like to set up a barting system between the rolling player and the GM.  In this system, the player and GM would each roll one d6 and end up with that many tokens.
+
+It might be weird to see that suggested because it seems like each player rolling isn't following that same "bell-curve" philosophy.  But I can assure you that it is, and that in fact, the player and the GM will roll close together more often than they will roll far apart.  The only difference is, because the second roll is considered negative instead of positive, the entire result will be offset by -7 and centered at 0 instead of 7.  If you are willing to believe a random website, here's an example on [AnyDice](https://anydice.com/program/c2c) (consider the player's roll positive and the GM's roll negative).  If you need more, here's a little (don't worry I'll restrain myself from adding a bunch).
+
+First, remember that when you roll a die, any result is the same. So we can say that:
+
+d6 = 7 - d6
+
+Which is just a fancy way to say a 1 is the same as 7 - 6.  A 2 is the same as 7 - 5.  And so on.
+With this, I can do this fancy trick:
+
+d6 - d6 = d6 - [7 - d6] = d6 - 7 + d6 = 2d6 - 7
+
+Which shows a positive d6 and a negative d6 is the same as the result of 2d6 - 7.
+
+On top of that, if one die is given to the GM instead of the player, it becomes possible to keep track of positive results and negative results without subtracting.  Well, I suppose there still is some subtracting, but we can hide it with some other tricks.
+
+## Bartering
+Suppose that at the end of the roll, the player and the GM each get a number of tokens equal to what they individually rolled.  Now, the two can use these tokens to negotiate an outcome to the roll.  Perhaps, they decide to cancel each other out. Or maybe they each grab 2 additional tokens before spending them on outcomes.  There are a ton of possibilities.
+
+To tie it to the fiction, the player can get an additional token for each reason their character would be good at the attempted action.  Likewise, the GM can get an additional token for each reason the character would struggle with the attempted action.  This could in theory be replaced with individual stats, but I do like replacing it with an open-ended idea instead.
+
+So, what are the player and GM bartering for?  That would have to be system specific.  While the system wouldn't be able to handle every case, it would be able to provide some examples that serve as guidelines.  For instance, a character death requiring the GM to spend 10 tokens.  Or knocking an enemy unconscious requiring the player to spend 4 tokens.  Or if they just want to slow the enemy down, maybe that only costs 2 tokens.
+
+Granted, there are some weird corner cases to handle as well.  There is the possibility of the GM and player both having 8 or more tokens.  And maybe both agree to cancel their tokens out before digging into it.  Then there's the possibility of there being 1 or 2 extra tokens left over after figuring out everything else.  In that case, I'd suggest canceling out the tokens first.  Then, any remaining GM token could be used to advance a progress clock.  And any remaining player tokens could be added to an XP pool of sorts.  Speaking of which&nbsp;...
+
+## XP Pool
+Why add an extra pool?  Really, it's mostly so the tokens don't go to waste.  Alternatively, it's because it does allow for some extra customization for the character.  Which does mean adding extra moves in addition to the one described above.  Maybe these are part of a playbook, but I'm not completely sure.  These moves would likely use different mechanics from the one aboves and be more situationally focused.  And they could be activated by spending XP from the current XP pool.  For instance, if a player was a thief, it could be a move like "you can spend two XP at any time to pick a lock without rolling."  This incentivizes doing some actions outside of a character's specialty in order to unlock the ability to both unlock and use more powerful moves at a later time.  
+
+# Putting it All Together
+Situation: The player wants their character to do something
+1. Does the character have a special move applying to the situation?  If so, and they are able to use it, the do that.  If not, move on to the next section.
+1. Prepare for a normal roll.  List all of the advantages the character has for this action.  For each one that everyone agrees on, give the player a token.
+1. List all of the disadvantages the character has for this action.  For each one that everyone agrees on, give the GM a token.
+1. The player rolls a d6 and takes that many tokens.
+1. The GM rolls a d6 and takes that many tokens.
+1. The player and GM either cancel out tokens or take extra ones each if they would like.  (This can be done at any time or even multiple times throughout the process, but it is a good starting point as well.)
+1. The player uses any supplemental moves they have to increase their token count if necessary.
+1. The player and GM use their tokens and the provided guidelines to determine what the outcome of the situation is and what side-effects come out of it.
+1. Spend leftover tokens on either advancing a clock or gaining XP.
+1. The agreed upon actions occur.
+
+And that's pretty much it.
+
+# Anything Else?
+Oh, plenty.  There's all sorts of other stuff that I'm not covering here.  Like I said, this is just the start of a framework to build a game system from&mdash;it's not a game itself.  Not to mention, I have no clue if this even would produce a fun game.  I'd have to actually try it out to be sure.  And maybe one day I will.  Or maybe someone else gets to it before me?  Who knows.  I'm definitely curious to try to make something with it in the future.  But maybe someone else will get to it first&mdash;and I don't mind that at all.  In fact, if you do, please let me know!  I'd love to hear what works and doesn't work with this system.
+
+</Markdown>
+</article>
+</MainLayout>
