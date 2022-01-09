@@ -1,6 +1,7 @@
 ---
 import { Markdown } from 'astro/components';
 import MainLayout from '../../layouts/MainLayout.astro';
+import MathWarning from '../../components/MathWarning.astro';
 ---
 
 <MainLayout categorySelected='articles'>
@@ -42,6 +43,7 @@ Overall, I think the 2d6 mechanic is a great way to do dice.  For one, it's pret
 
 It might be weird to see that suggested because it seems like each player rolling isn't following that same "bell-curve" philosophy.  But I can assure you that it is, and that in fact, the player and the GM will roll close together more often than they will roll far apart.  The only difference is, because the second roll is considered negative instead of positive, the entire result will be offset by -7 and centered at 0 instead of 7.  If you are willing to believe a random website, here's an example on [AnyDice](https://anydice.com/program/c2c) (consider the player's roll positive and the GM's roll negative).  If you need more, here's a little (don't worry I'll restrain myself from adding a bunch).
 
+<MathWarning>
 First, remember that when you roll a die, any result is the same. So we can say that:
 
 d6 = 7 - d6
@@ -52,6 +54,7 @@ With this, I can do this fancy trick:
 d6 - d6 = d6 - [7 - d6] = d6 - 7 + d6 = 2d6 - 7
 
 Which shows a positive d6 and a negative d6 is the same as the result of 2d6 - 7.
+</MathWarning>
 
 On top of that, if one die is given to the GM instead of the player, it becomes possible to keep track of positive results and negative results without subtracting.  Well, I suppose there still is some subtracting, but we can hide it with some other tricks.
 
