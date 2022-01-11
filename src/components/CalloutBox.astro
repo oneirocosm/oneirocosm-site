@@ -1,0 +1,15 @@
+---
+const { nonColorFmt='text-white border-2 rounded-lg mr-20 p-1 mb-5 mt-0 prose lg:prose-xl leading-snug lg:leading-snug',
+    speakerTable={}, speaker } = Astro.props;
+
+const speakerFmt = speakerTable[speaker];
+const colorFmt = speakerFmt !== null ? `${speakerFmt.bgColor} ${speakerFmt.borderColor}` : '';
+const marginFmt = speakerFmt !== null ? speakerFmt.margin : '';
+
+const format = `${nonColorFmt} ${colorFmt} ${marginFmt}`
+
+const speakName = speaker === '' ? '' : `${speaker}:`;
+---
+<div class={format}>
+    <span><span class="font-bold">{speakName}</span> <slot/></span>
+</div>
