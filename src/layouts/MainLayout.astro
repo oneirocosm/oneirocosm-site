@@ -21,7 +21,9 @@ for (let category of ['home', 'articles', 'about', 'contact']) {
 	<title>{title}</title>
 
 	<link rel="icon" href="/favicon.ico" />
-	<link rel="stylesheet" href={Astro.resolve('../styles/global.scss')}>
+	<style global>
+	@import "/src/styles/global.scss";
+	</style>
 </head>
 <body>
 	<main class="dark:bg-gray-700 min-h-screen">
