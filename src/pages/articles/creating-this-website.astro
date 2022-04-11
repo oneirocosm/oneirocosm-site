@@ -1,8 +1,11 @@
 ---
 import { Markdown } from 'astro/components';
 import MainLayout from '../../layouts/MainLayout.astro';
+
+const pageName = "Creating This Website";
+const pageDescription = "The trials and tribulations I went through to set up the initial version of this website.";
 ---
-<MainLayout categorySelected = 'articles'>
+<MainLayout categorySelected='articles' pageName={ pageName } pageDescription={ pageDescription }>
 <article class="prose lg:prose-xl dark:prose-dark">
 <Markdown>
 # Why Make a Website?

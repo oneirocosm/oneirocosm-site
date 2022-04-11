@@ -1,9 +1,12 @@
 ---
 import { Markdown } from 'astro/components';
 import MainLayout from '../../layouts/MainLayout.astro';
+
+const pageName = "The Nintendo Switch Battery Fiasco";
+const pageDescription = "It turns out, replacing the battery on a Nintendo Switch can be a bit of a challenge.  Here's some issues I ran into during the process.";
 ---
 
-<MainLayout categorySelected='articles'>
+<MainLayout categorySelected='articles' pageName={ pageName } pageDescription={ pageDescription }>
 <article class="prose lg:prose-xl dark:prose-dark">
 <Markdown>
 # The Nintendo Switch Battery Fiasco

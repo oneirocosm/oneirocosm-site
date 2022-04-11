@@ -1,9 +1,9 @@
 ---
 import DarkModeSwitch from '../components/DarkModeSwitch.astro';
-const { categorySelected = '' } = Astro.props;
+const { categorySelected = '', pageName = '', pageDescription = '' } = Astro.props;
 
 let title = 'oneirocosm';
-
+const url = new URL(Astro.request.url);
 
 const cssClassCategorySelected = "py-4 px-2 text-blue-700 border-b-4 border-blue-700 font-semibold";
 const cssClassCategoryOther = "py-4 px-2 text-gray-500 font-semibold hover:text-blue-700 transition duration-300";
@@ -18,6 +18,13 @@ for (let category of ['home', 'articles', 'about', 'contact']) {
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width">
+
+    <meta name="twitter:site" content={ title }>
+    <meta name="twitter:creator" content="@oneirocosm">
+    <meta name="twitter:url" content={ url }>
+    <meta name="twitter:title" content={ pageName }>
+    <meta name="twitter:description" content={ pageDescription }>
+
 	<title>{title}</title>
 
 	<link rel="icon" href="/favicon.ico" />
