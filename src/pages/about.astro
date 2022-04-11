@@ -1,9 +1,16 @@
 ---
+import { Markdown } from 'astro/components';
 import MainLayout from "../layouts/MainLayout.astro";
 ---
 
 <MainLayout categorySelected = 'about'>
 <article class="prose lg:prose-xl dark:prose-dark">
-    Hello!  My name is Colton, and this is my website!  Right now, it's mostly serving as a blog for various stuff that I feel like writing about, but in the future, who knows!  Anyway, the site is still a work in progress, so some parts won't be working properly yet.  Hopefully, I get that sorted out sooner rather than later.  Anyway, thanks for visiting!
+    <Markdown>
+    Hello!  My name is Colton&mdash;I'm currently trying out she/they pronouns.  I'm a queer individual still trying to figure out a lot about myself.
+
+    I studied physics and math in school and now work as a software developer.  In that line, a lot of my interests lie in science and technology, but it is by no means limited to that.  I'm also have major interests in fiction, video games, art, and so much more!  Truth be told, it's kind of hard to put all of that into a single category, so this website sort of serves as a grab bag for all of my interests.  Sure, it's not great for SEO, but I don't have an issue with that for a personal site.
+
+    If you have any questions, feel free to reach out to me somewhere in the [Contact](/contact/) section!
+    </Markdown>
 </article>
 </MainLayout>

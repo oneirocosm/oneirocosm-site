@@ -1,0 +1,19 @@
+---
+import { Markdown } from 'astro/components';
+import MainLayout from "../layouts/MainLayout.astro";
+---
+
+<MainLayout categorySelected = 'contact'>
+<article>
+    <Markdown>
+    <div class="prose lg:prose-xl dark:prose-dark">
+    I'm still trying to get all of my contact stuff together&mdash;primarily a new email and things like that.  In the meantime, here are a few places you can find me:
+    </div>
+
+    <a class="flex" title="Find me on Twitter at oneirocosm" href="https://www.twitter.com/oneirocosm"><img width="28px" height="28px" alt="Twitter website logo" src="/assets/twitter-color.svg"><div class="prose lg:prose-xl dark:prose-dark">  My Twitter</div></a>
+    <a class="flex" title="Find me on Gitlab" href="https://www.gitlab.com/coltontcrowe"><img width="32px" height="32px" alt="Git Lab website logo" src="/assets/gitlab-icon-rgb.svg"><div class="prose lg:prose-xl dark:prose-dark">My GitLab</div></a>
+
+
+    </Markdown>
+</article>
+</MainLayout>
