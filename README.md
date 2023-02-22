@@ -1,45 +1,18 @@
-New README courtesy of Astro.build.  Same goal as before, but this should make things easier.  ... I hope
+# Oneirocosm Site
+Hello!  This is the repository for my website.  It currently acts as a simple blog, but I'd like to update it in the future.
 
-# Welcome to [Astro](https://astro.build)
+Here, I write about small projects that I work on or really anything else that I feel like.  It is really meant to be a way for me to create longer posts about topics I care about without fear of the platform they are written on suddenly collapsing.  The site is created using [Astro(https://astro.build/)!
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/starter)
+## Existing Site
+This site is currently deployed to [https://oneirocosm.com](https://oneirocosm.com) which is currently hosted [on GitLab](https://gitlab.com/coltontcrowe/oneirocosm).  Future development should continue here on this GitHub, and plan to eventually hosting it with **GitHub Pages** or with another service.  More to be done in the future!
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```
-/
-├── public/
-│   ├── robots.txt
-│   └── favicon.ico
-├── src/
-│   ├── components/
-│   │   └── Tour.astro
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
-
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
+## Building the Site
 
 All commands are run from the root of the project, from a terminal:
 
 | Command           | Action                                       |
 |:----------------  |:-------------------------------------------- |
-| `npm install`     | Installs dependencies                        |
-| `npm run dev`     | Starts local dev server at `localhost:3000`  |
-| `npm run build`   | Build your production site to `./dist/`      |
-| `npm run preview` | Preview your build locally, before deploying |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://github.com/withastro/astro) or jump into our [Discord server](https://astro.build/chat).
+| `pnpm install`     | Installs dependencies                        |
+| `pnpm run dev`     | Starts local dev server at `localhost:3000`  |
+| `pnpm run build`   | Build your production site to `./dist/`      |
+| `pnpm run preview` | Preview your build locally, before deploying |
