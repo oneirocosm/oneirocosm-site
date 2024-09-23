@@ -1,0 +1,509 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import MathWarning from '../../components/MathWarning.astro';
+import CalloutBox from '../../components/CalloutBox.astro';
+
+const speakers = {
+    '': {
+        bgColor: 'bg-gray-500',
+        borderColor: 'border-gray-700',
+        margin: 'ml-0 mr-0',
+    },
+    'GM': {
+        bgColor: 'bg-purple-500',
+        borderColor: 'border-purple-700',
+        margin: 'ml-0 mr-20',
+    },
+    'Thief': {
+        bgColor: 'bg-blue-500',
+        borderColor: 'border-blue-700',
+        margin: 'ml-20 mr-0',
+    },
+    'Hacker': {
+        bgColor: 'bg-green-500',
+        borderColor: 'border-green-700',
+        margin: 'ml-20 mr-0',
+    },
+    'Acrobat': {
+        bgColor: 'bg-yellow-500',
+        borderColor: 'border-yellow-700',
+        margin: 'ml-20 mr-0',
+    },
+    'Assassin': {
+        bgColor: 'bg-red-500',
+        borderColor: 'border-red-700',
+        margin: 'ml-20 mr-0',
+    },
+    'Other Players': {
+        bgColor: 'bg-green-500',
+        borderColor: 'border-green-700',
+        margin: 'ml-20 mr-0',
+    },
+};
+
+const pageName = "A TTRPG Bartering System";
+const pageDescription = "An exploration into what I'm currently looking for in TTRPGs and where that leads.";
+---
+
+<MainLayout categorySelected='articles' pageName={ pageName } pageDescription={ pageDescription }>
+<article class="prose lg:prose-xl dark:prose-dark">
+<div class="todo">
+# A TTRPG Bartering System
+
+Note: If you just want to see the mechanics, skip to [the end](#putting-it-all-together).
+
+I've been on a TTRPG break for a bit, but [Interstitial Season 3](http://theorangegroves.com/podcasts/interstitial/season-3-proximity/) hitting suddenly has really brought me back into it.  I keep thinking about how a lot of systems hit close to what I want but don't quite get there entirely&mdash;and I'm sure that's a fairly universal experience for most people.  It's probably impossible to find a system that's exactly what you want.  And on top of that, if you did, that system wouldn't be right for other people, or maybe even yourself in the future.  Opinions change with time, after all.  Still, I figured I'd humor myself and try to outline something that aligns with a lot of my thoughts.
+
+## Inspiration by the Apocalypse
+So, what does this outline look like?  Well, let's start by looking at a few things that hit close as a start.  First up is [PbtA](http://apocalypse-world.com/pbta/policy) (Powered by the Apocalypse) systems.  If you aren't familiar, these systems are inspired by a game called "[Apocalypse World](http://apocalypse-world.com/)."  They often involve rolling 2d6 + some modifier (typically ranging from -2 to +3) depending on the character's stats.  Character's use a playbook which is similar to a "character class" but it comes with specific moves that help focus the character into specific actions.  When rolling, a result of 6 or less is a miss&mdash;which often results in the GM (Game Master) taking a "move" of some sort against the players.  A roll of 10 or more means a full success where the player accomplishes what they want&mdash;there may be some side-effect depending on the move, but it overall ends up much more beneficial to the player.  The interesting area covers the roles between 7 and 9 inclusive; this area is called a partial success.  In this zone, the player may accomplish a lesser version of what they were trying, but at the cost of some drawback coming from the GM.
+
+This dice system is at the heart of many PbtA games and I think it works incredibly well for a few reasons.  First, it means that on average, the player will roll a mixed success.  This is because when multiple dice are rolled, the result follows a "bell-curve" of sorts.  This is a bit of an oversimplification since the probability curve only gets more bell-like as more dice are added.  With two dice, it really looks more like a tent than a curve, but the idea still applies.
+
+Anyway, this makes 7 the statistically most likely result of a 2d6 roll.  It will be rolled roughly 16.67% of the time.  An 8 would be rolled 13.89% of the time and this continues dropping the farther you get from 7, with a result of 12 happening only 2.78% of the time.  Note that this distribution is mirrored, so the odds of rolling a 6 are the same as the odds of rolling an 8, and the odds of rolling a two (snake eyes) are the same as the odds of rolling a 12 (boxcars).  I won't go into too much more detail here, but there is plenty of other information if you're interested.
+
+Theoretically, it is possible to make this curve more bell-like by adding more dice, but there's a tradeoff there.  The more dice added, the bigger the numbers you're working with.  And with bigger numbers, there's more complicated arithmetic which risks slowing the game down.  So sticking with only two dice sidesteps this complexity and helps streamline it, so players have an easier time focusing on the story.
+
+The next PbtA idea that really works for me is centering the partial success.  It creates a really interesting dilemma for the player.  Do I want to avoid unintended consequences?  Or do I want to be exceptionally effective in what I'm doing at the cost of something else bad happening.  This is the area where PbtA shines the most for me.  It gives the GM an interesting place to add consequences for actions, and they often tend to flow together in ways that are incredibly interesting.  For instance, if the player decides to be overly effective but at the cost of a consequence, the GM may not actually have to do much to add that consequence.  Instead, the player states what they want that extra effectiveness to look like, and a natural consequence will fall out of that.  As an example, maybe the player is so focused in their goal, that they ignore some other risk that is posed to the rest of the party.
+
+## Shortcomings of the Apocalypse (for me)
+So, with all of that being said, there are some things about PbtA that don't quite work for me.  And to be fair, some of these things may not be part of PbtA itself, but they do come out of PbtA systems often enough for me to connect them.  The first, is the use of "Harm clocks" for characters.  To be clear, I like clocks for systems, they are really interesting, and they help round off some of the times when clear decisions aren't available.  And I also think character death can be very interesting to explore in the TTRPG space.  That being said, I don't particularly like the two being tied together.
+
+Like I said, character death can be very interesting&mdash;but I do believe the time and circumstances need to be right for it.  A random stray shot of a gun killing a character in the first session of a game isn't very interesting to me.  And while some may argue that it's realistic, I'm not really looking for that sort of realism in my games.  Alternatively, you could put a character out of commission when the clock goes down, but I personally would rather tie that to circumstances as opposed to a mechanical system.  To be honest, I'm not 100% sure what that looks like in practice, but it's something I'd like to see innovated on in the future.
+
+Another issue is that it's possible for a player's moves to cover a narrower set of actions than I'd like.  And I do believe that this one is fairly specific to me.  Because my ADHD brain will come up with the most out-there solutions to a problem, and I will latch onto it, even if it isn't necessarily aligned with the moves my character has available.  Typically, a PbtA system will get around this by providing a sort of catch-all move that will handle these corner-cases.  As an example, Interstitial provides the "Push Through Stress" move to handle this.
+
+And it is a good thing that these moves are provided&mdash;player's and GMs would be left high and dry without them.  But these moves often aren't as robust as I'd like them to be.  They are intentionally left vague to handle multiple situations, but this makes them a lot less adaptable to the situation at hand.  In an ideal world, I would prefer a move that can account for the variability in the situation and allow players to use it as is appropriate to the situation.
+
+One final shortcoming is the issue of failure.  PbtA does its best to make failure interesting by embracing the idea of fail forward&mdash;that is, the idea that failure pushes the story forward instead of grinding it to a halt.  That being said, it struggles to incentivize failure.  It often provides XP to players when they fail roles, but I've often found that it isn't enough to encourage players to embrace that result.
+
+The best alternative to this I've seen comes from [Dream Askew](https://buriedwithoutceremony.com/dream-askew) / [Dream Apart](https://buriedwithoutceremony.com/dream-apart).  In these systems, the player will choose to "fail" by performing a weak move.  This provides the player with a token that they can later spend to be able to use a strong move.  If weak moves are not performed, players will never have access to their strong moves, so they have to embrace weak moves in order to progress the story.  Which has the additional benefit creating a story that follows the sort of pattern put forth in [Hamlet's Hit Points](https://emshort.blog/2020/01/07/hamlets-hit-points-robin-d-laws/), but that's a topic for another time.
+
+## Another Inspiration
+I would be remiss if I didn't take a moment to talk about Fantasy Flight Games' systems, [Edge of the Empire](https://www.fantasyflightgames.com/en/products/star-wars-edge-of-the-empire/) and [Genesys](https://www.fantasyflightgames.com/en/products/genesys/).  These systems are unique in that they use proprietary dice to create rolls with wide degrees of success and side-effects.  There are three typical axes that these rolls work on.  The success/failure axis determines how well the task is performed.  The advantage/threat axis determines potential side-effects from the task.  And the triumph/despair axis determines critical results.
+
+One aspect of this system that I really appreciate is the way it provides so many different degrees of success and side-effects.  Often, in other systems, it's easy to feel like a +1 isn't really doing much, especially multiple roll values correspond to the same result.  For example, if a 7 and an 8 give the same result, a +1 often feels like it isn't doing all that much.  But in this system, all of the dice need to be accounted for&mdash;that is to say, two advantages will always be different from one advantage.
+
+This unfortunately comes with one particular drawback that the system doesn't always manage well.  Because the rolls give concrete results, players sometimes have a few leftover advantages or threats that they aren't sure what to do with.  I think it is a good idea for systems inspired by this to provide quick methods to resolve these situations without bogging down the game.
+
+## My Alternatives
+So, this begs the question: what do I take from these systems and what alternatives do I use to fill in the gaps?  To which I answer that I don't know for sure, but I can certainly take a guess.  After all, systems require a lot of playtesting to fine-tune, and I'm kind of flying by the seat of my pants right now.  Not to mention, I'm not too keen on planning out the nuance of a complete system at the moment.  This would often involve typing an settings, archetypes, and other ideas to make it more taylored to a specific experience&mdash;and I don't have any of those ideas in mind at the moment.  So I'll just be creating a general framework that hopefully a system could be built on top of.
+
+### Dice Mechanics
+Overall, I think the 2d6 mechanic is a great way to do dice.  For one, it's pretty accessible as 6-sided dice are pretty easy to find.  Not to mention, the numbers form a pretty good range already.  But I'd ideally like to use this mechanic in a slightly different way&mdash;I'd like to set up a barting system between the rolling player and the GM.  In this system, the player and GM would each roll one d6 and end up with that many tokens.
+
+It might be weird to see that suggested because it seems like each player rolling isn't following that same "bell-curve" philosophy.  But I can assure you that it is, and that in fact, the player and the GM will roll close together more often than they will roll far apart.  The only difference is, because the second roll is considered negative instead of positive, the entire result will be offset by -7 and centered at 0 instead of 7.  If you are willing to believe a random website, here's an example on [AnyDice](https://anydice.com/program/c2c) (consider the player's roll positive and the GM's roll negative).  If you need more convincing, here's a little math to show they're the same(don't worry I'll restrain myself from adding too much).
+
+<MathWarning>
+First, remember that when you roll a die, any result is the same. So we can say that:
+
+<div class="text-center">
+d6 = 7 - d6
+</div>
+
+Which is just a fancy way to say a 1 is the same as 7 - 6.  A 2 is the same as 7 - 5.  And so on.
+With this, I can do this fancy trick:
+
+<div class="text-center py-2">
+d6 - d6 = d6 - [7 - d6]
+</div>
+<div class="text-center ml-14 py-2">
+= d6 - 7 + d6
+</div>
+<div class="text-center ml-6 py-2">
+= 2d6 - 7
+</div>
+
+Which shows a positive d6 and a negative d6 is the same as the result of 2d6 - 7.
+</MathWarning>
+
+On top of that, if one die is given to the GM instead of the player, it becomes possible to keep track of positive results and negative results without subtracting.  Well, I suppose there still is some subtracting, but we can hide it with some other tricks.
+
+### Bartering
+Suppose that at the end of the roll, the player and the GM each get a number of tokens equal to what they individually rolled.  Now, the two can use these tokens to negotiate an outcome to the roll.  Perhaps, they decide to cancel each other out. Or maybe they each grab 2 additional tokens before spending them on outcomes.  There are a ton of possibilities.
+
+To tie it to the fiction, the player can get an additional token for each reason their character would be good at the attempted action.  Likewise, the GM can get an additional token for each reason the character would struggle with the attempted action.  This could in theory be replaced with individual stats, but I do like replacing it with an open-ended idea instead.
+
+So, what are the player and GM bartering for?  That would have to be system specific.  While the system wouldn't be able to handle every case, it would be able to provide some examples that serve as guidelines.  For instance, a character death requiring the GM to spend 10 tokens.  Or knocking an enemy unconscious requiring the player to spend 4 tokens.  Or if they just want to slow the enemy down, maybe that only costs 2 tokens.
+
+Granted, there are some weird corner cases to handle as well.  There is the possibility of the GM and player both having 8 or more tokens.  And maybe both agree to cancel their tokens out before digging into it.  Then there's the possibility of there being 1 or 2 extra tokens left over after figuring out everything else.  In that case, I'd suggest canceling out the tokens first.  Then, any remaining GM token could be used to advance a progress clock.  And any remaining player tokens could be added to an XP pool of sorts.  Speaking of which&nbsp;...
+
+### XP Pool
+Why add an extra pool?  The first reason is so extra tokens don't go to waste.  But diving into it a bit more, it does allow for some extra customization for the character.  Which does mean adding extra moves in addition to the one described above.  Maybe these are part of a playbook, but I'm not completely sure.  These moves would likely use different mechanics from the one aboves and be more situationally focused.  And they could be activated by spending XP from the current XP pool.  For instance, if a player was a thief, it could be a move like "you can spend two XP at any time to pick a lock without rolling."  This incentivizes doing some actions outside of a character's specialty in order to unlock the ability to both unlock and use more powerful moves at a later time.  
+
+## An Example
+That's all pretty theoretical, so I'll provide an example scenario of what this could look like in practice.  I was initially planning to write out four rolls, but instead I'll write out one roll and look at four ways it can be interpreted. They will feature a GM and four characters whom I will name after their party role (for simplicity's sake).  They are the Thief, the Hacker, the Acrobat, and the Assassin.  Dialogue is in quotes, and GM narration is in italics.  Normal table talk is in normal text.
+
+*The party has been sneaking into a top-secret facility.  They just walked down a long hallway and found a locked door at the end.  They approach the door and deliberate for a bit before deciding that they should attempt to pick the lock.*
+
+<CalloutBox speaker='GM' speakerTable={ speakers }>
+Picking the lock is definitely an option.  Which one of you would like to do it?
+</CalloutBox>
+
+<CalloutBox speaker='Thief' speakerTable={ speakers }>
+It makes a lot of sense for me to try.  I'm kind of an expert at working with locks.
+</CalloutBox>
+
+<CalloutBox speaker='Acrobat' speakerTable={ speakers }>
+Makes sense to me.  Unless Hacker has some computer thing they can do.
+</CalloutBox>
+
+<CalloutBox speaker='Hacker' speakerTable={ speakers }>
+I mean, it's technically possible, but I think Thief has the best shot at it.
+</CalloutBox>
+
+<CalloutBox speaker='Assassin' speakerTable={ speakers }>
+Yeah, Thief is probably best for this.
+</CalloutBox>
+
+<CalloutBox speaker='GM' speakerTable={ speakers }>
+Okay.  Then let's have you try to pick the lock.  Do you have any particular moves that you can use for this?
+</CalloutBox>
+
+<CalloutBox speaker='Thief' speakerTable={ speakers }>
+Yes, but I'm trying to build up XP right now.  Let's do a normal roll instead.
+</CalloutBox>
+
+<CalloutBox speaker='GM' speakerTable={ speakers }>
+Sounds good to me.  Like you said, you are sort of an expert in this type of thing.  I think that's worth 2 tokens for you.
+</CalloutBox>
+
+<CalloutBox speaker='Thief' speakerTable={ speakers }>
+I'd argue it could be 3.
+</CalloutBox>
+
+<CalloutBox speaker='GM' speakerTable={ speakers }>
+Hmmm ... 3 seems like a lot.  I think you mentioned having lock-picking tools though.  If we throw that in, it makes some sense to bump it up to 3.
+</CalloutBox>
+
+<CalloutBox speaker='Thief' speakerTable={ speakers }>
+No chance of getting it to 4?
+</CalloutBox>
+
+<CalloutBox speaker='GM' speakerTable={ speakers }>
+In this case, probably not.  Remember, this is a top-secret facility.  And I do think because of that, it makes sense to have 1 token for me.
+</CalloutBox>
+
+<CalloutBox speaker='Thief' speakerTable={ speakers }>
+Yeah, good point.  Anything else?
+</CalloutBox>
+
+<CalloutBox speaker='GM' speakerTable={ speakers }>
+Well, I'll give you a choice here.  If what's behind this lock is really important, then it's even more secure.  So that would be 2 tokens for me instead of 1.  Otherwise, with just the 1 token, it's still important, but not as much.
+</CalloutBox>
+
+<CalloutBox speaker='Thief' speakerTable={ speakers }>
+I mean, if you put it like that, I have to take the risk.  Is everyone else okay with that?
+</CalloutBox>
+
+<CalloutBox speaker='Hacker' speakerTable={ speakers }>
+No problems here.
+</CalloutBox>
+
+<CalloutBox speaker='' speakerTable={ speakers }>
+<span class="italic">Everyone else around the table nods in agreement.</span>
+</CalloutBox>
+
+<CalloutBox speaker='Thief' speakerTable={ speakers }>
+Alright, let's roll for it.
+</CalloutBox>
+
+<CalloutBox speaker='' speakerTable={ speakers }>
+<span class="italic">The GM rolls a 3, giving them a total of 5 tokens.</span>
+</CalloutBox>
+
+<CalloutBox speaker='' speakerTable={ speakers }>
+<span class="italic">The Thief rolls a 4, giving them a total of 7 tokens.</span>
+</CalloutBox>
+
+### Case 1: Taking Caution
+
+<CalloutBox speaker='GM' speakerTable={ speakers }>
+Pretty normal roll.  Would you like to cancel out our tokens before bargaining?
+</CalloutBox>
+
+<CalloutBox speaker='Thief' speakerTable={ speakers }>
+Yeah ... I think that's a good idea.  I don't really want to blow our cover yet.
+</CalloutBox>
+
+<CalloutBox speaker='GM' speakerTable={ speakers }>
+Okay, that leaves you with 2 tokens.  You mentioned wanting to build XP.  If you want, we could each take one more token.  I'd give a small drawback with mine.  But you are free to use your two to get through the door without issue.  Then you'd have an extra one that you could keep for XP.
+</CalloutBox>
+
+<CalloutBox speaker='Thief' speakerTable={ speakers }>
+I'm definitely tempted.  But things have been going well so far.  I'd really like to play it safe for now.  I'm assuming everyone else is okay with that?
+</CalloutBox>
+
+<CalloutBox speaker='Assassin' speakerTable={ speakers }>
+Yeah, I'd prefer to stay in a stealthy situation for now.
+</CalloutBox>
+
+<CalloutBox speaker='Thief' speakerTable={ speakers }>
+Acrobat, how about you?  You're the one of us who seems to prefer louder conflicts.
+</CalloutBox>
+
+<CalloutBox speaker='Acrobat' speakerTable={ speakers }>
+I'm sure that will come soon enough.  For now, it's your choice.
+</CalloutBox>
+
+<CalloutBox speaker='Thief' speakerTable={ speakers }>
+Thanks!
+</CalloutBox>
+
+<CalloutBox speaker='GM' speakerTable={ speakers }>
+Alright.  So you'll get through this without issue.  It's fairly mundane, but it comes with no drawbacks.  Would you like to describe it?
+</CalloutBox>
+
+<CalloutBox speaker='Thief' speakerTable={ speakers }>
+<span class="italic">I expertly pick at the inner mechanisms of the lock.  To an untrained eye, it doesn't make much sense what I'm doing.  But despite that, I keep going.  And after a minute of fidgeting, there's a click, and the door swings open.</span>
+</CalloutBox>
+
+<CalloutBox speaker='GM' speakerTable={ speakers }>
+<span class="italic">In front of you is a small room that seems disappointing at first.  But you turn your attention to the desk in front of you and find schematics for the entire building.  And a keycard was carelessly left on the desk as well.</span>
+</CalloutBox>
+
+### Case 2: Just a Small Drawback, as a Treat
+
+<CalloutBox speaker='GM' speakerTable={ speakers }>
+Pretty normal roll.  Would you like to cancel out our tokens before bargaining?
+</CalloutBox>
+
+<CalloutBox speaker='Thief' speakerTable={ speakers }>
+Yeah ... I think that's a good idea.  I don't really want to blow our cover yet.
+</CalloutBox>
+
+<CalloutBox speaker='GM' speakerTable={ speakers }>
+Okay, that leaves you with 2 tokens.  You mentioned wanting to build XP.  If you want, we could each take one more token.  I'd give a small drawback with mine.  But you are free to use your two to get through the door without issue.  Then you'd have an extra one that you could keep for XP.
+</CalloutBox>
+
+<CalloutBox speaker='Thief' speakerTable={ speakers }>
+Well, we're doing really well. ... And I could kind of use the resources if we end up getting in a bind.  What do you all think?
+</CalloutBox>
+
+<CalloutBox speaker='Assassin' speakerTable={ speakers }>
+You know me.  I tend to prefer playing it safer.  But like you said, we're doing pretty well already.  It's not my first choice, but I'd be fine with it.
+</CalloutBox>
+
+<CalloutBox speaker='Hacker' speakerTable={ speakers }>
+Yeah, I don't really mind right now.  If we were doing worse, it may be an issue but for now ....
+</CalloutBox>
+
+<CalloutBox speaker='Acrobat' speakerTable={ speakers }>
+Agreed!
+</CalloutBox>
+
+<CalloutBox speaker='Thief' speakerTable={ speakers }>
+It's settled then.
+</CalloutBox>
+
+<CalloutBox speaker='GM' speakerTable={ speakers }>
+In that case, go ahead and describe yourself opening the door.  Feel free to make it kind of cool if you want, since you're spending extra.
+</CalloutBox>
+
+<CalloutBox speaker='Thief' speakerTable={ speakers }>
+Okay then.  <span class="italic">So, I approach the door and take a moment to just stand back and look at the lock before shaking my head and sighing.  "That's a tough one&mdash;made by Badgershell over a decade ago&mdash;military grade.  No way to pick it."</span>
+</CalloutBox>
+
+<CalloutBox speaker='Acrobat' speakerTable={ speakers }>
+<span class="italic">"Not even for you?"</span>
+</CalloutBox>
+
+<CalloutBox speaker='Thief' speakerTable={ speakers }>
+<span class="italic">"Not even for me. ... But, now that you mention it, they did go through some hard times.  There was a scandal before the company whent out of business.  Outsorced their metal work to a company that wasn't up to code. And if we're lucky ...."  I walk up to the door with a small drill. "Then maybe ...." I proceed to drill a small hole in the top of the lock.  And after a moment, I remove the drill and pull out a hammer.  "You may want to cover your ears." I strike the lock with the hammer and a bang rings out, followed immediately by a click."</span> 
+</CalloutBox>
+
+<CalloutBox speaker='Assassin' speakerTable={ speakers }>
+<span class="italic">"What the HELL are you doing?"</span>
+</CalloutBox>
+
+<CalloutBox speaker='Thief' speakerTable={ speakers }>
+<span class="italic">"Like you had a better idea.  Besides, it worked, didn't it."</span>
+</CalloutBox>
+
+<CalloutBox speaker='GM' speakerTable={ speakers }>
+<span class="italic">And with that, the door swings open revealing a small staircase.  You can hear the telltale sign of a large server rack below.  And Thief, go ahead and take 1 XP for that.  As for the drawback, your action was a bit loud, so I'm just going to use that to advance a clock here.  For a brief moment, we see a guard in a far-off room look up after hearing an echoing bang.  She's not going to bother with it now.  But eventually, she may eventually decide to take a look.</span>
+</CalloutBox>
+
+
+### Case 3: Guns Blazing
+
+<CalloutBox speaker='GM' speakerTable={ speakers }>
+Pretty normal roll.  Would you like to cancel out our tokens before bargaining?
+</CalloutBox>
+
+<CalloutBox speaker='Thief' speakerTable={ speakers }>
+Yeah ... although I am curious, do you have something in mind if we don't.
+</CalloutBox>
+
+<CalloutBox speaker='GM' speakerTable={ speakers }>
+I mean, right now, it's mostly just things that will alert the guards that you're here.  But I could do something else instead.
+</CalloutBox>
+
+<CalloutBox speaker='Acrobat' speakerTable={ speakers }>
+I do have an idea along that line.  What if this leads to some sort of accessway that gives us a way to what we're looking for as well as a way out if we need?  And maybe it's heavily guarded, so they're immediately aware that we're here.
+</CalloutBox>
+
+<CalloutBox speaker='Hacker' speakerTable={ speakers }>
+Ooh&mdash;I like that idea.  How many tokens do you think would be left after that?
+</CalloutBox>
+
+<CalloutBox speaker='GM' speakerTable={ speakers }>
+That's like 5 of your tokens I think.  And since the progress clock isn't very far at all, that uses all of mine.
+</CalloutBox>
+
+<CalloutBox speaker='Thief' speakerTable={ speakers }>
+So that leaves 2 that I can use for XP?  That works for me.  Assassin, are you alright with that.
+</CalloutBox>
+
+<CalloutBox speaker='Assassin' speakerTable={ speakers }>
+Well, it's not my favorite plan in the world.  I can't exactly thrive in a situation like that.
+</CalloutBox>
+
+<CalloutBox speaker='GM' speakerTable={ speakers }>
+What if this is sort of a fire escape, spiral staircase situation&mdash;sort of like the towers in Metal Gear Solid.  That gives you some options to hide, and some vertical stuff as well.  Since you like integrating verticality into attacks.
+</CalloutBox>
+
+<CalloutBox speaker='Assassin' speakerTable={ speakers }>
+Yeah, that works.  Alright, I'm in!
+</CalloutBox>
+
+<CalloutBox speaker='GM' speakerTable={ speakers }>
+Great!  In that case, Thief, go ahead and describe your success.  I'll describe the next room once you enter it.
+</CalloutBox>
+
+<CalloutBox speaker='Thief' speakerTable={ speakers }>
+<span class="italic">Okay, so I go up to the door and say, "This shouldn't take long."</span> Actually, hold on a minute, can we be aware of what's on the other side of the door before we enter?
+</CalloutBox>
+
+<CalloutBox speaker='GM' speakerTable={ speakers }>
+Hmmmm ... I don't think you entirely know, but maybe if you listen through the door, you can tell it's a big staircase, which gives you a good idea you're probably entering a guarded area.
+</CalloutBox>
+
+<CalloutBox speaker='Thief' speakerTable={ speakers }>
+Perfect!  <span class="italic">So I grab my lock picks and a stethescope and quickly get to work.  "You see, these sorts of locks are tricky.  They have an extra mechanism that makes it so you can't really pick them by feel like you normally would.  But if you know how to use sound ...." And there's a click from the door.  "Perfect.  But it kind of sounds like there's a weird sort of vertical breeze here.  I think this may be the accessway staircase."</span>
+</CalloutBox>
+
+<CalloutBox speaker='Hacker' speakerTable={ speakers }>
+<span class="italic">"So it will take it to the place that we're looking for?"</span>
+</CalloutBox>
+
+<CalloutBox speaker='Thief' speakerTable={ speakers }>
+<span class="italic">"Yes, and even better, it will also give us a way out." And I point to the roof indicating that there should be a way up.</span>
+</CalloutBox>
+
+<CalloutBox speaker='Assassin' speakerTable={ speakers }>
+<span class="italic">"If it is the access staircase," and I draw my knives at this, "then we should be prepared for a fight."</span>
+</CalloutBox>
+
+<CalloutBox speaker='Acrobat' speakerTable={ speakers }>
+<span class="italic">"Agreed.  I'm ready when you are." And I gesture to the Thief.</span>
+</CalloutBox>
+
+<CalloutBox speaker='Thief' speakerTable={ speakers }>
+<span class="italic">"Okay then.  Here we go!"  And I raise my leg and just do a giant kick on the door&mdash;like a sparta kick.</span>
+</CalloutBox>
+
+<CalloutBox speaker='GM' speakerTable={ speakers }>
+Perfect.  <span class="italic">"Your kick sends the door flying open, perhaps faster than even you expected.  Unbeknownst to you, there was a guard on the other side.  But he didn't expect you either&mdash; the door crashes into him and sends him flying over the railing.  The camera follows him to the edge and peers over looking down, down, down.  And after a few seconds, you finally hear a crash.  Someone a few stories above you shouts, "What the hell!  Code red!  I repeat, code red," before running down the stairs after you.  It seems they know you're here.</span>  Thief, go ahead and take 2 XP.  And the rest of you, what do you do next?
+</CalloutBox>
+
+### Case 4: Oops
+
+<CalloutBox speaker='GM' speakerTable={ speakers }>
+Pretty normal roll.  Would you like to cancel out our tokens before bargaining?
+</CalloutBox>
+
+<CalloutBox speaker='Thief' speakerTable={ speakers }>
+Hmmm ... good question.  You know, I do really need XP right now.  Say this goes really bad for us.  What would happen in that sort of situation?
+</CalloutBox>
+
+<CalloutBox speaker='GM' speakerTable={ speakers }>
+Right now, you're mostly looking at ruining your stealth.  And if you completely fail to open the lock, maybe even a trap of some sort gets set off.
+</CalloutBox>
+
+<CalloutBox speaker='Assassin' speakerTable={ speakers }>
+I don't know that I'm really okay with that right now.  I'd prefer it if we don't get into a giant mess before we find our target.
+</CalloutBox>
+
+<CalloutBox speaker='Thief' speakerTable={ speakers }>
+Yeah, I see your point.  Would a trap that only affects me be an option?
+</CalloutBox>
+
+<CalloutBox speaker='GM' speakerTable={ speakers }>
+You know, I hadn't thought of that.  Maybe something like a trap door?  I actually really like that idea.
+</CalloutBox>
+
+<CalloutBox speaker='Thief' speakerTable={ speakers }>
+Assassin, is that okay with you?
+</CalloutBox>
+
+<CalloutBox speaker='Assassin' speakerTable={ speakers }>
+I mean, sure.  It does sound pretty interesting, and it keeps me in my element.
+</CalloutBox>
+
+<CalloutBox speaker='GM' speakerTable={ speakers }>
+So, let's see.  That's going to take up four of my tokens.  And it would make sense that this makes it slightly more likely for them to know you're here.  So I'd use the last one to advance a clock.
+</CalloutBox>
+
+<CalloutBox speaker='Acrobat' speakerTable={ speakers }>
+And that leaves Thief with 7 to spend on XP!?
+</CalloutBox>
+
+<CalloutBox speaker='Hacker' speakerTable={ speakers }>
+I mean, since it only affects one of us, that kind of feels like a token we're using.  I think 6 makes more sense.
+</CalloutBox>
+
+<CalloutBox speaker='Thief' speakerTable={ speakers }>
+Yeah, that's fair.
+</CalloutBox>
+
+<CalloutBox speaker='GM' speakerTable={ speakers }>
+Okay then.  In that case, Thief, I need you to explain to me, what do you do wrong?
+</CalloutBox>
+
+<CalloutBox speaker='Thief' speakerTable={ speakers }>
+<span class="italic">So, I approach the lock and take a quick look at it.  "Really?  That's it?  What decade do they think it is?"</span>
+</CalloutBox>
+
+<CalloutBox speaker='Hacker' speakerTable={ speakers }>
+<span class="italic">"Please be careful.  Remember who we're dealing with."</span>
+</CalloutBox>
+
+<CalloutBox speaker='Thief' speakerTable={ speakers }>
+<span class="italic">I am.  But this is practically baby's first lock in terms of lock picking."  I pull out my picks and quickly get to work.  What I don't realize is that this lock has been modified.  They added an electrical component that will detect when a pin has been pushed in too far.</span>"
+</CalloutBox>
+
+<CalloutBox speaker='GM' speakerTable={ speakers }>
+<span class="italic">So, your picking it, and then you here a high pitched, "Beep beep."</span>
+</CalloutBox>
+
+<CalloutBox speaker='Thief' speakerTable={ speakers }>
+<span class="italic">"That's not supposed to happen."  And then the floor just falls out under me and I fall down a chute to who knows where.</span>
+</CalloutBox>
+
+<CalloutBox speaker='GM' speakerTable={ speakers }>
+Yep, we'll deal with that in just a minute.  But go ahead and take your 6 XP.  As for everyone else, <span class="italic">you watch as a door opens up and Thief falls through.  None of you are fast enough to catch him before he falls through.</span>  What do you do next?
+</CalloutBox>
+
+<div id="putting-it-all-together"></div>
+
+## Putting it All Together
+Situation: The player wants their character to do something
+1. Does the character have a special move applying to the situation?  If so, and they are able to use it, the do that.  If not, move on to the next section.
+1. Prepare for a normal roll.  List all of the advantages the character has for this action.  For each one that everyone agrees on, give the player a token.
+1. List all of the disadvantages the character has for this action.  For each one that everyone agrees on, give the GM a token.
+1. The player rolls a d6 and takes that many tokens.
+1. The GM rolls a d6 and takes that many tokens.
+1. The player and GM either cancel out tokens or take extra ones each if they would like.  (This can be done at any time or even multiple times throughout the process, but it is a good starting point as well.)
+1. The player uses any supplemental moves they have to increase their token count if necessary.
+1. The player and GM use their tokens and the provided guidelines to determine what the outcome of the situation is and what side-effects come out of it.
+1. Spend leftover tokens on either advancing a clock or gaining XP.
+1. The agreed upon actions occur.
+
+And that's pretty much it.
+
+## Anything Else?
+Oh, plenty.  There's all sorts of other stuff that I'm not covering here.  Like I said, this is just the start of a framework to build a game system from&mdash;it's not a game itself.  Not to mention, I have no clue if this even would produce a fun game.  I'd have to actually try it out to be sure.  And maybe one day I will.  Or maybe someone else gets to it before me?  Who knows.  I'm definitely curious to try to make something with it in the future.  But maybe someone else will get to it first&mdash;and I don't mind that at all.  In fact, if you do, please let me know!  I'd love to hear what works and doesn't work with this system.
+
+</div>
+</article>
+</MainLayout>

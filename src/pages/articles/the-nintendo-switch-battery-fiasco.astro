@@ -1,0 +1,118 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+
+const pageName = "The Nintendo Switch Battery Fiasco";
+const pageDescription = "It turns out, replacing the battery on a Nintendo Switch can be a bit of a challenge.  Here's some issues I ran into during the process.";
+---
+
+<MainLayout categorySelected='articles' pageName={ pageName } pageDescription={ pageDescription }>
+<article class="prose lg:prose-xl dark:prose-dark">
+<div class="todo">
+# The Nintendo Switch Battery Fiasco
+
+## Oops
+I love my Nintendo Switch.  It's a great little console that does exactly what it was designed to.  Sure, it isn't the most powerful thing in the world, but honestly, it doesn't need to be.  But the sad truth is, I haven't been setting aside enough time to play it recently.  And because of that, it's been sitting idly by for a couple months.  Which isn't usually a problem, but this time, I forgot to plug in my Switch dock.  So imagine my surprise on Christmas day, where I charge it up, turn it on, and then the battery dies in five minutes.
+
+It turns out, I'm not the first person to run into this problem&mdash;it's a known limitation of the battery used in the Nintendo Switch.  To be more specific, when a Nintendo Switch has been sitting for a long period of time (typically, a few months) without being charged, the battery can become useless.  And this is exactly what happened to me.
+
+## I'm a Goofy Goober
+My first mistake was leaving my Switch in sleep mode the last time I played it.  Granted, at the time, I figured I'd pick it up again in a day or so, but that ended up getting away from me.  Anyway, since it was in sleep mode, the battery slowly drained over the next day or two and then the Switch shut off from having no battery left over.  This, by itself, would not be enough to cause permanent damage, but in my ignorance, I left the Switch sitting on my desk, not charging for around a month or so.
+
+Even still, one month alone probably wouldn't have wrecked the battery.  It may have had an impact on its ability to hold a charge, but there was another issue.  When I did finally get around to putting my Switch back in its dock, I had forgotten that I had unplugged the dock to work on some cable management.  So, even though it was in the dock, it still wasn't charging.  And this dragged on for an extra two or three months.
+
+So, in hindsight, I guess it's not too big a surprise that the battery was toast after that.  But it doesn't leave me with a ton of options.  It would still be possible to play the Switch docked, but I didn't want to limit myself to that.  So I figured I'd look into alternative ways around it.
+
+Sadly, I saw a lot of people just gave up on their Switch after this, but I wasn't ready to give up just yet.  The more promising option would be to [send it to Nintendo for repairs](https://en-americas-support.nintendo.com/app/answers/detail/a_id/28823/p/989/c/208).  Unfortunately, I've had my Switch for a few years, and it's no longer under warranty&mdash;so I'd have to pay them for this.  They don't publically post the prices for that sort of service, but I was seeing claims that it could be up to half of the cost of a new console.  Which, when you consider the existence of a recent OLED model, it becomes more understandable why someone would just get a new system.
+
+Not to mention, there is one other reason that I hesitate to send my Switch to Nintendo&mdash;one that is born completely from irrationality and paranoia.  More or less, there is an exploit that exists in the firmware of old Nintendo Switch systems (and other Tegra devices) called [fusee-gelee](https://github.com/Qyriad/fusee-launcher/blob/master/report/fusee_gelee.md).  This exploit allows you to do cool things like hack the Switch and put custom software on it.  You may be asking why Nintendo doesn't just patch it out, and the reason is, they have no way to remotely update the firmware.  Which was actually a really important decision because if it could be altered remotely, it would open the Switch to all sorts of remote security attacks.
+
+Theoretically, the only way Nintendo can patch the firmware is if they physically have the device.  So it is technically possible that they could do that if I sent it in for repairs.  Realistically, I sort of doubt that they would do this for every device that arrived for repair, but it wouldn't be the strangest thing I've heard of Nintendo doing.
+
+And you may be asking, why would I even want to hack the Switch?  And honestly, I don't have a good answer for you&mdash;I don't even know if I want to do that.  It just kind of sounds like a fun project that could be cool in the future.  And it would kind of suck to pay a bunch of money to have that possibility taken away from me.
+
+I guess there was a third reason as well&mdash;another selfish one.  I'd kind of wanted to take my Switch apart for a while to see how it all fits together.  And while I recognized that this would be putting myself through a lot of trouble, living through that trouble is different than imagining it in advance.  But trouble is interesting, and that is where the meat of this article lies.
+
+## The Teardown
+To get started, I ordered a new battery off of [iFixit](https://www.ifixit.com/Store/Game-Console/Nintendo-Switch-Console-Battery/IF378-011?o=4).  I already had one of their [toolsets](https://www.ifixit.com/Store/Tools/Mako-Driver-Kit--64-Precision-Bits/IF145-299?o=4), so I just needed the battery in this case.  The battery arrived fairly quickly, and I quickly jumped in.  Removing the screws and taking apart the case was simple, and I didn't have much trouble getting to the battery itself, but once I did, I hit a couple problems.
+
+First, I didn't realize that when I took off the metal plate covering the battery, I'd be separating an area with thermal paste on it.  This isn't a horrible problem, but I'd rather be sure I don't mess up the thermal paste in this process.  So I ordered some [new paste](http://www.arcticsilver.com/as5.htm) that I could replace the old paste with.  This took a few more days to arrive, but was mostly a minor inconvenience in the grand scheme of things.
+
+Second, the adhesive on the battery was really sticky.  They recommended using 90% isopropyl alcohol to remove it.  Then, I would need new adhesive to attach the new battery.  Like the thermal paste, the adhesive was fairly easy to obtain&mdash;it was mostly just a waiting game.  The real problem was taking off the old adhesive.  Because it really didn't want to come off.  So, I began slowly pouring a little alcohol around the battery, waiting, trying to pry it up, and then repeating.
+
+But I got impatient.  I poured a little too much alcohol in the area and it overflowed a bit.  To the point where if I flipped the Switch over and looked at the screen, there was a small deposit of alcohol sitting in the lower corner.  And even after waiting a couple more days for the other supplies to arrive, it was still there.  So, I had just created a new problem for myself.
+
+## Some Additional Disassembly Required
+I realized, I was going to need to take off the screen which meant digging a bit deeper into the internals.  Before doing so, I made sure to get the battery out first.  After all, it would be kind of pointless for me to make this fix and then have to go through the entire process again.  Eventually, I got past that, and it was time to move on.  Like before, unscrewing everything seemed pretty easy for the most part.  Everything was laid out clearly, and the tools I had worked perfectly.
+
+The screen, however, was a slightly different story.  It wasn't that taking off the screen was technically difficult or anything&mdash;it just felt really weird to do.  Essentially, I had to heat up the screen with a hair drier and then pull apart the screen from the adhesive using a suction cup.  Then, I used a credit card to break the seal around the rest of the screen.  Then, I used a microfiber cloth to remove the excess alcohol and took a lot of extra time trying to make sure no dust was getting left beind.  In the end, I don't think it was perfect, but it was significantly better than having a bunch of liquid stuck back there.
+
+From here, I began putting everything back together and adding thermal paste to the areas where it was required.  I got back to the point where I was before the alcohol fiasco and began working on the new adhesive for the new battery.  That went really well, and I got the battery in place in no time flat.  And then I realized, I had a bigger problem on my hand.  It turns out that when I detached the first battery from the motherboard, I may have sort of broke the battery connector on the motherboard.  Typically, this connector has five pins contacting the board, but I only had four.  I had made a mistake, and this time, it was a bigger problem.
+
+<div class="m-auto w-3/4 h-auto">
+    <figure>
+    <img src="/assets/articles/the-nintendo-switch-battery-fiasco/broken-part.jpg" alt="Broken Nintendo Switch battery connector">
+    <figcaption>Here's what the broken connector looks like.  If you look closely, you can see the lower left corner is chipped and missing one of the five pins.</figcaption>
+    </figure>
+</div>
+
+## Holy Mother of Circuits
+So, a broken component on a motherboard isn't exactly the easiest fix in the world.  In fact, a lot of people will just recommend getting a new motherboard altogether instead of dealing with the hassle.  At which point I would basically have the Nitendo Switch of Theseus. (Sorry&mdash;not sorry.)
+
+But I did manage to find something promising; I found several sites that sell the exact connector I needed.  And at this point, I'd already come this far, so why not?  I picked out one of them where I could buy the part individually (instead of in groups of five), and ordered it.  Then, it was just a matter of waiting for the new part to arrive.
+
+So I waited, and waited, and waited some more.  And after a month, I began to worry.  I went back to the website I ordered it from, and the site was gone.  Weirdly, everyone seemed to think the website was legit, so I'm not really sure what happened.  Perhaps it just went out of business right after I ordered?  Or maybe the site was out of business for years, and this was a scam to make a website that looked like a copy.
+
+Honestly, I'm not going to worry about it too much&mdash;it was like five dollars.  I found another website, but they only sold the part in bundles of 5.  It was still pretty cheap, so I ordered it anyway and got it within a week.  So shout-outs to [NorthridgeFIX](https://northridgefix.com)&mdash;you really helped me out here.
+
+With the piece there, I began to get to work on removing the broken piece.  I began with a [soldering iron](https://pine64.com/product/pinecil-smart-mini-portable-soldering-iron/), which got most of it, but some of it was being stubborn.  So, I ended up using a heat gun to get the rest (more on this later).  Typically, this would be fine, but I made a mistake by leaving the motherboard in the case when I did this, so the case started to deform from the heat&mdash;luckily, it was just a small section though.  So, I had to take some steps to remove the motherboard from the case before continuing.  This meant, I had to undo some work with the thermal paste I applied, but it honestly didn't matter too much so long as I added more paste when I was done.
+
+<div class="m-auto w-3/4 h-auto">
+    <figure>
+    <img src="/assets/articles/the-nintendo-switch-battery-fiasco/removed-part.jpg" alt="The battery connector removed from the board">
+    <figcaption>After the battery connector was mostly removed.  This was after I used the soldering iron but before I used the heat gun.</figcaption>
+    </figure>
+</div>
+
+<div class="m-auto w-3/4 h-auto">
+    <figure>
+    <img src="/assets/articles/the-nintendo-switch-battery-fiasco/deformed-case.jpg" alt="The slight deformation in the switch case">
+    <figcaption>The slight deformation in the case after I put the Switch back together.  Remember folks, heat deforms plastic.</figcaption>
+    </figure>
+</div>
+
+
+## Nintendon't Try This at Home
+The remaining piece came off fairly easily, but adding the new piece turned out to be pretty difficult.  See, you typically want to use solder paste for something like this, but I didn't end up getting it.  Also, the Nintendo Switch should be using lead-free solder, so I needed to do the same&mdash;you typically want solder that melts around the same temperature.  I mentioned before that I had a heat gun to help with this&mdash;what I failed to mention is that it isn't a heat gun that's designed for electronics.  Rather, it's the one my mom uses for embossing when she works on crafts.
+
+So, all of that being said, maybe the process would have been easier with a different heat gun, but it was what I had at the time.  I ended up using my soldering iron to apply a little extra solder at the start&mdash;which I think is pretty unorthodox, but it ended up okay.  Then, I had to use the heat gun and the soldering iron together to get it evenly to the different pads.  The flux in the solder already makes it gravitate to a pad, but it needed a little prodding, to guide it to the ones I wanted.  (This would have probably been significantly easier with solder paste.)
+
+Then, I had to make sure the solder was hot *before* I tried to add the new component.  Reason is, if the solder doesn't flow to the new component, the component won't have anything holding it to the board and the heat gun can end up blowing it away.  At first, I was having a lot of trouble and figured it wouldn't end up working with my equipment.  But eventually, everything just sort of fell into place.  One moment I was holding the new component in a pair of tweezers, and the next it was securely on the board with all of the contacts perfectly touching.
+
+<div class="m-auto w-3/4 h-auto">
+    <figure>
+    <img src="/assets/articles/the-nintendo-switch-battery-fiasco/replaced-part.jpg" alt="The replaced battery connector">
+    <figcaption>The battery connector after being re-attached.  Yes, I did melt part of the mousepad that I put underneath it in the process</figcaption>
+    </figure>
+</div>
+
+## The Aftermath
+The next part was putting it together.  I was honestly a bit worried that I'd have trouble since I had taken off some of the parts a month prior, but it ended up working out fine&mdash;err, mostly fine.  When I first turned it on, there was an issue with the SD card reader not working ... which was because I hadn't plugged it in properly.  But once I did, it worked like normal.
+
+There was one other small problem&mdash;remember how I accidentally doused some of the internals in alcohol.  Well, the LCD didn't like that very much, and it left some weird light spots scattered throughout the screen.  They aren't that bad, but that's not the sort of thing you can fix unless you get a new LCD display altogether.  And who knows, maybe one day I will.  But for now, I'm happy to have my Switch back.  The case may be slightly deformed in one spot and there may be some weird spots on the screen, but I can play my games again, and that makes me happy!
+
+<div class="m-auto w-3/4 h-auto">
+    <figure>
+    <img src="/assets/articles/the-nintendo-switch-battery-fiasco/damaged-screen.jpg" alt="Damaged LCD Display">
+    <figcaption>There are some light splotches on the screen due to spilling alcohol over it.  Noticeable, but not terrible.</figcaption>
+    </figure>
+</div>
+
+
+So, when it comes down to this, should I have tried to do this?  Well, probably not.  In the grand scheme of things, I probably saved a decent amount of money on parts, but because I am new to this, the amount of time it took me probably wasn't worth it.  Not to mention, I probably waited longer for parts to ship than I would have waited if I had sent it off.  And I ended up damaging the system on top of that.
+
+That being said, I'm really glad I did.  I learned a lot, and I just feel really accomplished about the whole thing.  Yeah, I made some mistakes that I probably should have made on less important things, but I wasn't really planning on working on that any time soon.  In the spirit of this entire website, it was nice to jump into it even if it was pretty scary.  And it did end up working out mostly fine in the end.
+
+I got my Switch back, I could dowload the games I got for Christmas, and I have the ability to play the new Pokemon game!  So, if you don't see a new post on this site for a while, it may be because I'm lost in Hisui.  Because exploring it feels that much more satisfying after having to go through this ordeal to get there.
+</div>
+</article>
+</MainLayout>
