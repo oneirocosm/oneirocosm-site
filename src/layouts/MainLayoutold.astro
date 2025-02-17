@@ -1,0 +1,150 @@
+---
+import DarkModeSwitch from '../components/DarkModeSwitch.astro';
+const { categorySelected = '', pageName = '', pageDescription = '' } = Astro.props;
+
+let title = 'oneirocosm';
+const url = new URL(Astro.request.url);
+
+type Theme = {
+	home: string;
+	articles: string;
+	about: string;
+	contact: string;
+}
+
+const cssClassCategorySelected = "py-4 px-2 text-blue-700 border-b-4 border-blue-700 font-semibold";
+const cssClassCategoryOther = "py-4 px-2 text-gray-500 font-semibold hover:text-blue-700 transition duration-300";
+let themesCategory: Theme = {"home": "", articles: "", about: "", contact: ""};
+
+for (let category of ['home', 'articles', 'about', 'contact']) {
+	themesCategory[category] = (category == categorySelected) ? cssClassCategorySelected : cssClassCategoryOther;
+}
+---
+
+<html lang="en" class="dark">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width">
+
+	<meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content={ title }>
+    <meta name="twitter:creator" content="@oneirocosm">
+    <meta property="og:url" content={ url }>
+    <meta property="og:title" content={ pageName }>
+    <meta property="og:description" content={ pageDescription }>
+	<meta name="twitter:image" content="https://oneirocosm.com/logo.png">
+
+	<title>{title}</title>
+
+	<link rel="icon" href="/favicon.ico" />
+</head>
+<body class="dark">
+	<main>
+		<nav class="bg-white shadow-lg dark:bg-gray-700 dark">
+			<div class="max-w-6xl mx-auto px-4 nav-content">
+							<!-- Website Logo -->
+							<a href="/" class="flex items-center py-4 px-2 logo-box">
+								<img src="/logo.png" alt="Logo" class="h-8 w-8 mr-2 rounded-full">
+								<span class="font-semibold text-gray-500 text-lg">{ title }</span>
+							</a>
+						<!-- Primary Navbar items -->
+						<div class="hidden md:flex items-center space-x-1 nav-links">
+							<a href="/" class={ themesCategory['home'] }>Home</a>
+							<a href="/articles/" class={ themesCategory['articles'] }>Articles</a>
+							<a href="/about/" class={ themesCategory['about'] }>About Me</a>
+							<a href="/contact/" class={ themesCategory['contact'] }>Contact</a>
+						</div>
+					<!-- Secondary Navbar items -->
+					<div class="flex items-right space-x-3 ">
+						<DarkModeSwitch />
+					</div>
+					<!-- Mobile menu button -->
+					<div class="md:hidden flex items-center">
+						<button class="outline-none mobile-menu-button">
+						<svg class=" w-6 h-6 text-gray-500 hover:text-blue-700 "
+							x-show="!showMenu"
+							fill="none"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							viewBox="0 0 24 24"
+							stroke="currentColor"
+						>
+							<path d="M4 6h16M4 12h16M4 18h16"></path>
+						</svg>
+					</button>
+					</div>
+				</div>
+			</div>
+			<!-- mobile menu -->
+			<div class="hidden mobile-menu">
+				<ul class="">
+					<li class="active"><a href="/" class="block text-sm px-2 py-4 text-white bg-blue-700 font-semibold">Home</a></li>
+					<li><a href="/articles/" class="block text-sm px-2 py-4 hover:bg-blue-700 transition duration-300">Articles</a></li>
+					<li><a href="/about/" class="block text-sm px-2 py-4 hover:bg-blue-700 transition duration-300">About Me</a></li>
+					<li><a href="/contact/" class="block text-sm px-2 py-4 hover:bg-blue-700 transition duration-300">Contact</a></li>
+				</ul>
+			</div>
+			<script>
+				const btn = document.querySelector("button.mobile-menu-button") as Element;
+				const menu = document.querySelector(".mobile-menu") as Element;
+
+				btn.addEventListener("click", () => {
+					menu.classList.toggle("hidden");
+				});
+			</script>
+		</nav>
+		<div class="flex flex-col items-center m-6">
+		<slot />
+		</div>
+	<footer class="bg-white shadow-lg dark:bg-gray-700 text-gray-500 text-lg text-center mt-10">&#127279; Copyleft 2022 Sylvie Crowe</footer>
+	</main>
+</body>
+</html>
+<style>
+	body {
+		min-height: 100vh;
+		padding: 0;
+		margin: 0;
+
+		main {
+			nav {
+				.nav-content {
+					max-width: 1152px;
+					display: flex;
+					justify-content: space-between;
+					margin: auto;
+					padding 0 16px;
+
+					.logo-box {
+						display: flex;
+						align-items: center;
+						padding: 16px 8px;
+
+						img {
+							display: flex;
+							height: 32px;
+							width: 32px;
+							margin-right: 8px;
+							border-radius: 9999px;
+						}
+					}
+
+					.nav-links {
+
+					}
+
+				}
+
+				&.dark {
+					box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+				}
+			}
+		}
+
+		&.dark {
+			background-color: rgb(55 65 81);
+		}
+	}
+</style>

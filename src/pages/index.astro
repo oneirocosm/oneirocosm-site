@@ -2,14 +2,38 @@
 import MainLayout from "../layouts/MainLayout.astro";
 ---
 
-<MainLayout categorySelected = 'home'>
-<article>
-	<img style="width: 18rem; margin-bottom: 2rem;" src="/logo.png" alt="Logo" class="rounded-full m-auto block">
+<MainLayout categorySelected="home">
+  <article>
+    <img src="/logo.png" alt="Logo" class="portrait" />
 
-	<div class="prose lg:prose-xl dark:prose-dark todo">
-	Hello! My name is Sylvie, and this is my website! Right now, it's mostly serving as a blog for various stuff that I feel like writing about, but in the future, who knows! Anyway, the site is still a work in progress, so some parts won't be working 100% properly yet&mdash;that said, it's starting to get there.  Anyway, thanks for visiting!
-
-	Odds are, if you are looking for something here, I've moved it to the [Articles](/articles/) section.  I've also finally filled out the [About Me](/about/) and [Contact](/contact/) sections, so feel free to take a look at those as well!
-	</div>
-</article>
+    <div class="content">
+      Hello! My name is Sylvie, and this is my website! Right now, it's mostly
+      serving as a blog for various stuff that I feel like writing about, but in
+      the future, who knows! Anyway, the site is still a work in progress, so
+      some parts won't be working 100% properly yet&mdash;that said, it's
+      starting to get there. Anyway, thanks for visiting! Odds are, if you are
+      looking for something here, I've moved it to the [Articles](/articles/)
+      section. I've also finally filled out the [About Me](/about/) and
+      [Contact](/contact/) sections, so feel free to take a look at those as
+      well!
+    </div>
+  </article>
 </MainLayout>
+<style>
+  .portrait {
+    display: block;
+    width: 18rem;
+    margin: auto;
+    margin-bottom: 2rem;
+    border-radius: 100%;
+  }
+
+  .content {
+    max-width: 65ch;
+
+    @media (min-width: 1024px) {
+      font-size: 1.25rem;
+      line-height: 1.8;
+    }
+  }
+</style>

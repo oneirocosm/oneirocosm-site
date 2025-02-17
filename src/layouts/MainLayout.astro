@@ -1,108 +1,244 @@
 ---
-import DarkModeSwitch from '../components/DarkModeSwitch.astro';
-const { categorySelected = '', pageName = '', pageDescription = '' } = Astro.props;
+import DarkModeSwitch from "../components/DarkModeSwitch.astro";
+import BaseHead from "../components/BaseHead.astro";
+const {
+  categorySelected = "",
+  pageName = "",
+  pageDescription = "",
+} = Astro.props;
 
-let title = 'oneirocosm';
+let title = "oneirocosm";
 const url = new URL(Astro.request.url);
-
-type Theme = {
-	home: string;
-	articles: string;
-	about: string;
-	contact: string;
-}
-
-const cssClassCategorySelected = "py-4 px-2 text-blue-700 border-b-4 border-blue-700 font-semibold";
-const cssClassCategoryOther = "py-4 px-2 text-gray-500 font-semibold hover:text-blue-700 transition duration-300";
-let themesCategory = {"home": "", articles: "", about: "", contact: ""};
-
-for (let category of ['home', 'articles', 'about', 'contact']) {
-	themesCategory[category] = (category == categorySelected) ? cssClassCategorySelected : cssClassCategoryOther;
-}
 ---
 
 <html lang="en" class="dark">
+  <!-- 
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width">
 
-	<meta name="twitter:card" content="summary">
-    <meta name="twitter:site" content={ title }>
-    <meta name="twitter:creator" content="@oneirocosm">
     <meta property="og:url" content={ url }>
     <meta property="og:title" content={ pageName }>
     <meta property="og:description" content={ pageDescription }>
-	<meta name="twitter:image" content="https://oneirocosm.com/logo.png">
 
 	<title>{title}</title>
 
 	<link rel="icon" href="/favicon.ico" />
 </head>
-<body>
-	<main class="dark:bg-gray-700 min-h-screen">
-		<nav class="bg-white shadow-lg dark:bg-gray-700">
-			<div class="max-w-6xl mx-auto px-4">
-				<div class="flex justify-between">
-					<div class="flex space-x-7">
-						<div>
-							<!-- Website Logo -->
-							<a href="/" class="flex items-center py-4 px-2">
-								<img src="/logo.png" alt="Logo" class="h-8 w-8 mr-2 rounded-full">
-								<span class="font-semibold text-gray-500 text-lg">{ title }</span>
-							</a>
-						</div>
-						<!-- Primary Navbar items -->
-						<div class="hidden md:flex items-center space-x-1">
-							<a href="/" class={ themesCategory['home'] }>Home</a>
-							<a href="/articles/" class={ themesCategory['articles'] }>Articles</a>
-							<a href="/about/" class={ themesCategory['about'] }>About Me</a>
-							<a href="/contact/" class={ themesCategory['contact'] }>Contact</a>
-						</div>
-					</div>
-					<!-- Secondary Navbar items -->
-					<div class="flex items-right space-x-3 ">
-						<DarkModeSwitch />
-					</div>
-					<!-- Mobile menu button -->
-					<div class="md:hidden flex items-center">
-						<button class="outline-none mobile-menu-button">
-						<svg class=" w-6 h-6 text-gray-500 hover:text-blue-700 "
-							x-show="!showMenu"
-							fill="none"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							viewBox="0 0 24 24"
-							stroke="currentColor"
-						>
-							<path d="M4 6h16M4 12h16M4 18h16"></path>
-						</svg>
-					</button>
-					</div>
-				</div>
-			</div>
-			<!-- mobile menu -->
-			<div class="hidden mobile-menu">
-				<ul class="">
-					<li class="active"><a href="/" class="block text-sm px-2 py-4 text-white bg-blue-700 font-semibold">Home</a></li>
-					<li><a href="/articles/" class="block text-sm px-2 py-4 hover:bg-blue-700 transition duration-300">Articles</a></li>
-					<li><a href="/about/" class="block text-sm px-2 py-4 hover:bg-blue-700 transition duration-300">About Me</a></li>
-					<li><a href="/contact/" class="block text-sm px-2 py-4 hover:bg-blue-700 transition duration-300">Contact</a></li>
-				</ul>
-			</div>
-			<script>
-				const btn = document.querySelector("button.mobile-menu-button");
-				const menu = document.querySelector(".mobile-menu");
+-->
+  <BaseHead title={title} description="" />
+  <body class="dark">
+    <main>
+      <nav class="">
+        <div class="nav-content">
+          <div class="all-links">
+            <!-- Website Logo -->
+            <a href="/" class="site-logo">
+              <img src="/logo.png" alt="Logo" class="site-logo__logo" />
+              <span class="site-logo__title">{title}</span>
+            </a>
+            <!-- Primary Navbar items -->
+            <div class="navbar">
+              <a href="/" class="navbar__item">Home</a>
+              <a href="/articles/" class="navbar__item">Articles</a>
+              <a href="/about/" class="navbar__item">About Me</a>
+              <a href="/contact/" class="navbar__item">Contact</a>
+            </div>
+          </div>
+          <!-- Secondary Navbar items -->
+          <div class="navbar-secondary">
+            <DarkModeSwitch />
+          </div>
+          <!-- Mobile menu button -->
+          <button class="mobile-menu-button">
+            <svg
+              class="mobile-menu-button__icon"
+              x-show="!showMenu"
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+        </div>
+        <!-- mobile menu -->
+        <div class="mobile-menu hidden">
+          <ul class="mobile-menu__list">
+            <li class="mobile-menu__line">
+              <a href="/" class="mobile-menu__item">Home</a>
+            </li>
+            <li class="mobile-menu__line">
+              <a href="/articles/" class="mobile-menu__item">Articles</a>
+            </li>
+            <li class="mobile-menu__line">
+              <a href="/about/" class="mobile-menu__item">About Me</a>
+            </li>
+            <li class="mobile-menu__line">
+              <a href="/contact/" class="mobile-menu__item">Contact</a>
+            </li>
+          </ul>
+        </div>
+        <script>
+          const btn = document.querySelector(
+            "button.mobile-menu-button"
+          ) as Element;
+          const menu = document.querySelector(".mobile-menu") as Element;
 
-				btn.addEventListener("click", () => {
-					menu.classList.toggle("hidden");
-				});
-			</script>
-		</nav>
-		<div class="flex flex-col items-center m-6">
-		<slot />
-		</div>
-	<footer class="bg-white shadow-lg dark:bg-gray-700 text-gray-500 text-lg text-center mt-10">&#127279; Copyleft 2022 Sylvie Crowe</footer>
-	</main>
-</body>
+          btn.addEventListener("click", () => {
+            menu.classList.toggle("hidden");
+          });
+        </script>
+      </nav>
+      <div class="page-content-box">
+        <slot />
+      </div>
+      <footer><div class="footer-content">2025 Sylvie Crowe</div></footer>
+    </main>
+  </body>
 </html>
+<style>
+  body {
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+
+    main {
+      background: rgb(55, 65, 81);
+      min-height: 100vh;
+      color: var(--header-text-color);
+      display: flex;
+      flex-direction: column;
+      nav {
+        box-shadow:
+          rgba(0, 0, 0, 0) 0px 0px 0px 0px,
+          rgba(0, 0, 0, 0) 0px 0px 0px 0px,
+          rgba(0, 0, 0, 0.1) 0px 10px 15px -3px,
+          rgba(0, 0, 0, 0.1) 0px 4px 6px -4px;
+
+        .nav-content {
+          max-width: 72rem;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin: auto;
+
+          .all-links {
+            display: flex;
+            font-weight: 600;
+
+            .site-logo {
+              display: flex;
+              align-items: center;
+              padding: 16px 8px;
+              font-size: 18px;
+
+              img {
+                display: flex;
+                height: 32px;
+                width: 32px;
+                margin-right: 8px;
+                border-radius: 9999px;
+              }
+            }
+
+            .navbar {
+              display: flex;
+              align-items: center;
+              margin-left: 28px;
+
+              .navbar__item {
+                padding: 16px 8px;
+              }
+            }
+          }
+
+          .navbar-secondary {
+            display: flex;
+          }
+
+          .mobile-menu-button {
+            background-color: transparent;
+            border: 0;
+            cursor: pointer;
+            height: 24px;
+            width: 24px;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            color: inherit;
+            @media (min-width: 768px) {
+              display: none;
+            }
+            .mobile-menu-button__icon {
+              width: 24px;
+              height: 24px;
+              display: block;
+
+              &:hover {
+                color: var(--accent);
+              }
+            }
+          }
+        }
+
+        .mobile-menu {
+          &.hidden {
+            display: none;
+          }
+
+          .mobile-menu__list {
+            .mobile-menu__line {
+              .mobile-menu__item {
+                display: block;
+                font-size: 14px;
+                line-height: 20px;
+                font-weight: 600;
+                padding: 16px 8px;
+
+                &:hover {
+                  background-color: var(--accent);
+                  color: white;
+                }
+              }
+            }
+          }
+        }
+
+        &.dark {
+          box-shadow:
+            0 10px 15px -3px rgb(0 0 0 / 0.1),
+            0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+      }
+
+      .page-content-box {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        margin: 24px;
+      }
+
+      footer {
+        margin-top: auto;
+
+        .footer-content {
+          text-align: center;
+          margin-top: 2.5rem;
+          margin-bottom: 1rem;
+          font-size: 1.125rem;
+          line-height: 1.75rem;
+        }
+      }
+    }
+
+    &.dark {
+      background-color: rgb(55 65 81);
+    }
+  }
+</style>
