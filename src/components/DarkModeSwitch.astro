@@ -1,11 +1,7 @@
-<button
-  id="theme-toggle"
-  type="button"
-  class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-500 rounded-lg text-sm p-2.5"
->
+<button id="theme-toggle" type="button">
   <svg
     id="theme-toggle-dark-icon"
-    class="theme-icon hidden"
+    class="theme-icon--dark"
     fill="currentColor"
     viewBox="0 0 20 20"
     xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +11,7 @@
   </svg>
   <svg
     id="theme-toggle-light-icon"
-    class="theme-icon"
+    class="theme-icon--light"
     fill="currentColor"
     viewBox="0 0 20 20"
     xmlns="http://www.w3.org/2000/svg"
@@ -36,13 +32,16 @@
       color: var(--accent);
     }
 
-    .theme-icon {
+    .theme-icon--light {
       width: 20px;
       height: 20px;
+      display: var(--light-display);
+    }
 
-      &.hidden {
-        display: none;
-      }
+    .theme-icon--dark {
+      width: 20px;
+      height: 20px;
+      display: var(--dark-display);
     }
   }
 </style>
@@ -60,12 +59,9 @@
     onEntry() {
       document.documentElement.classList.remove("dark");
       localStorage.setItem("color-theme", "light");
-      this.icon.classList.remove("hidden");
     }
 
-    onExit() {
-      this.icon.classList.add("hidden");
-    }
+    onExit() {}
 
     next() {
       return themeStates.dark;
@@ -84,12 +80,9 @@
     onEntry() {
       document.documentElement.classList.add("dark");
       localStorage.setItem("color-theme", "dark");
-      this.icon.classList.remove("hidden");
     }
 
-    onExit() {
-      this.icon.classList.add("hidden");
-    }
+    onExit() {}
 
     next() {
       return themeStates.light;

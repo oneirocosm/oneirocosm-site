@@ -11,7 +11,7 @@ let title = "oneirocosm";
 const url = new URL(Astro.request.url);
 ---
 
-<html lang="en" class="dark">
+<html lang="en" class="">
   <!-- 
 <head>
 	<meta charset="UTF-8">
@@ -27,7 +27,7 @@ const url = new URL(Astro.request.url);
 </head>
 -->
   <BaseHead title={title} description="" />
-  <body class="dark">
+  <body class="">
     <main>
       <nav class="">
         <div class="nav-content">
@@ -106,10 +106,12 @@ const url = new URL(Astro.request.url);
     padding: 0;
     margin: 0;
 
+    background-color: var(--color-sitebg);
+    color: var(--color-text);
+
     main {
-      background: rgb(55, 65, 81);
+      background: var(--color-sitebg);
       min-height: 100vh;
-      color: var(--header-text-color);
       display: flex;
       flex-direction: column;
       nav {
@@ -125,6 +127,7 @@ const url = new URL(Astro.request.url);
           justify-content: space-between;
           align-items: center;
           margin: auto;
+          color: var(--header-text-color);
 
           .all-links {
             display: flex;
@@ -238,7 +241,6 @@ const url = new URL(Astro.request.url);
     }
 
     &.dark {
-      background-color: rgb(55 65 81);
     }
   }
 </style>
