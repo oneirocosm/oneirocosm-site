@@ -8,7 +8,8 @@ const {
 } = Astro.props;
 
 let title = "oneirocosm";
-const url = new URL(Astro.request.url);
+const url = Astro.url.pathname;
+console.log(url);
 ---
 
 <html lang="en" class="">
@@ -39,10 +40,29 @@ const url = new URL(Astro.request.url);
             </a>
             <!-- Primary Navbar items -->
             <div class="navbar">
-              <a href="/" class="navbar__item">Home</a>
-              <a href="/articles/" class="navbar__item">Articles</a>
-              <a href="/about/" class="navbar__item">About Me</a>
-              <a href="/contact/" class="navbar__item">Contact</a>
+              <a
+                href="/"
+                class={url == "/" ? "navbar__item--current" : "navbar__item"}
+                >Home</a
+              >
+              <a
+                href="/articles/"
+                class={url === "/articles/"
+                  ? "navbar__item--current"
+                  : "navbar__item"}>Articles</a
+              >
+              <a
+                href="/about/"
+                class={url === "/about/"
+                  ? "navbar__item--current"
+                  : "navbar__item"}>About Me</a
+              >
+              <a
+                href="/contact/"
+                class={url === "/contact/"
+                  ? "navbar__item--current"
+                  : "navbar__item"}>Contact</a
+              >
             </div>
           </div>
           <!-- Secondary Navbar items -->
@@ -155,6 +175,11 @@ const url = new URL(Astro.request.url);
 
               .navbar__item {
                 padding: 16px 8px;
+              }
+              .navbar__item--current {
+                padding: 16px 8px 12px 8px;
+                border-bottom: 4px solid var(--accent);
+                color: var(--accent);
               }
             }
           }
