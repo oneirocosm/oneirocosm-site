@@ -122,7 +122,7 @@ console.log(url);
     </main>
   </body>
 </html>
-<style>
+<style is:inline>
   body {
     min-height: 100vh;
     padding: 0;
@@ -282,5 +282,20 @@ console.log(url);
 
     &.dark {
     }
+  }
+
+  figure {
+    margin: auto;
+    width: 75%;
+    height: auto;
+
+	figcaption {
+		p {
+			margin-top: 0;
+			margin-bottom: 2rem;
+			font-size: 1rem;
+			line-height: 1.2rem;
+		}
+	}
   }
 </style>
