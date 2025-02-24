@@ -1,8 +1,30 @@
 <div role="alert">
-  <div class="bg-red-500 text-white font-bold rounded-t px-4 py-2">
+  <div class="header">
     Danger: Math is contained below&mdash;read at your own risk!
   </div>
-  <div class="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-1 text-red-700 leading-none">
+  <div class="content">
     <slot />
   </div>
 </div>
+<style>
+  .header {
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem;
+    background-color: rgb(239, 68, 68, 0.8);
+    color: white;
+    padding: 0.5rem 1rem;
+    font-weight: bold;
+    border: 1px solid rgb(248, 113, 113, 0.8);
+  }
+
+  .content {
+    color: rgb(185, 28, 28);
+    line-height: 1;
+    padding: 0.25rem 1rem;
+    background-color: rgb(254, 226, 226);
+    border: 1px solid rgb(248, 113, 113);
+    border-top-width: 0;
+    border-bottom-right-radius: 0.25rem;
+    border-bottom-left-radius: 0.25rem;
+  }
+</style>
