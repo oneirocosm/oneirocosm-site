@@ -1,15 +1,94 @@
 ---
-const { nonColorFmt='text-white border-2 rounded-lg mr-20 p-1 mb-5 mt-0 prose lg:prose-xl leading-snug lg:leading-snug',
-    speakerTable={}, speaker } = Astro.props;
 
-const speakerFmt = speakerTable[speaker];
-const colorFmt = speakerFmt !== null ? `${speakerFmt.bgColor} ${speakerFmt.borderColor}` : '';
-const marginFmt = speakerFmt !== null ? speakerFmt.margin : '';
+const {bgColor="gray", speaker="?", justify="none"} = Astro.props;
 
-const format = `${nonColorFmt} ${colorFmt} ${marginFmt}`
+let marginLeft = "0";
+let marginRight = "0";
+if (justify == "left") {
+    marginRight = "20%";
+}
+if (justify == "right") {
+    marginLeft = "5rem";    
+}
+
+
+const speakers = {
+'': {
+bgColor: 'bg-gray-500',
+borderColor: 'border-gray-700',
+margin: 'ml-0 mr-0',
+},
+'GM': {
+bgColor: 'bg-purple-500',
+borderColor: 'border-purple-700',
+margin: 'ml-0 mr-20',
+},
+'Thief': {
+bgColor: 'bg-blue-500',
+borderColor: 'border-blue-700',
+margin: 'ml-20 mr-0',
+},
+'Hacker': {
+bgColor: 'bg-green-500',
+borderColor: 'border-green-700',
+margin: 'ml-20 mr-0',
+},
+'Acrobat': {
+bgColor: 'bg-yellow-500',
+borderColor: 'border-yellow-700',
+margin: 'ml-20 mr-0',
+},
+'Assassin': {
+bgColor: 'bg-red-500',
+borderColor: 'border-red-700',
+margin: 'ml-20 mr-0',
+},
+'Other Players': {
+bgColor: 'bg-green-500',
+borderColor: 'border-green-700',
+margin: 'ml-20 mr-0',
+},
+};
+
+let sep = ":";
+if (!speaker) {
+    sep="";
+}
 
 const speakName = speaker === '' ? '' : `${speaker}:`;
 ---
-<div class={format}>
-    <span><span class="font-bold">{speakName}</span> <slot/></span>
+<div class="callout-box">
+    <span class="speaker-name">{speaker}{sep}</span>
+    <slot/>
 </div>
+<style define:vars={{bgColor, marginLeft, marginRight}}>
+    .speaker-name {
+        font-weight: bold;
+    }
+
+    .callout-box {
+        background-color: oklch(from var(--bgColor) l c h / 0.5);
+        margin-left: var(--marginLeft);
+        margin-right: var(--marginRight);
+        border-radius: 0.5rem;
+        padding: 0.25rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: baseline;
+        gap: 0.75rem;
+
+        p {
+            padding: 0;
+            margin: 0;
+            display: block;
+            line-height: 1.8rem;
+        }
+
+        em {
+            padding: 0;
+            margin: 0;
+            display: inline;
+            line-height: 1.8rem;
+        }
+    }
+</style>
