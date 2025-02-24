@@ -95,8 +95,7 @@ b {
 	font-weight: 700;
 }
 a {
-  color:inherit;
-  text-decoration:inherit
+	color: inherit;
 }
 a:hover {
 	color: var(--accent);
