@@ -114,7 +114,9 @@ console.log(url);
         </script>
       </nav>
       <div class="page-content-box">
-        <slot />
+        <div class="page-content">
+          <slot />
+        </div>
       </div>
       <footer><div class="footer-content">2025 Sylvie Crowe</div></footer>
     </main>
@@ -254,6 +256,15 @@ console.log(url);
         justify-content: space-between;
         align-items: center;
         margin: 24px;
+
+        .page-content {
+          max-width: 65ch;
+
+          @media (min-width: 1024px) {
+            font-size: 1.25rem;
+            line-height: 1.8;
+          }
+        }
       }
 
       footer {
