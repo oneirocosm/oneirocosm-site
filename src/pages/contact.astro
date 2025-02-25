@@ -3,26 +3,47 @@ import MainLayout from "../layouts/MainLayout.astro";
 ---
 
 <MainLayout>
-<article>
-<div>
+  <article>
     <div>
-    If you want to get a hold of me for some reason, please don't hesitate to reach out.  Here are a few places you can find me!
+      <div>
+        If you want to get a hold of me for some reason, please don't hesitate
+        to reach out. Here are a few places you can find me!
+      </div>
+
+      <a
+        class="social-link"
+        title="Find me on Twitter at oneirocosm"
+        href="https://bsky.app/profile/oneirocosm.bsky.social"
+        ><img
+          class="logo"
+          width="28px"
+          height="28px"
+          alt="Bluesky website logo"
+          src="/assets/bluesky-color.svg"
+        /><div>My Bluesky</div></a
+      >
+      <a
+        class="social-link"
+        title="Email me"
+        href="mailto:contact@oneirocosm.com"
+        ><img
+          class="logo"
+          width="32px"
+          height="32px"
+          alt="Email logo"
+          src="/assets/mail.svg"
+        /><div>contact@oneirocosm.com</div></a
+      >
     </div>
-
-    <a class="social-link" title="Find me on Twitter at oneirocosm" href="https://bsky.app/profile/oneirocosm.bsky.social"><img class="logo" width="28px" height="28px" alt="Bluesky website logo" src="/assets/bluesky-color.svg"><div>  My Bluesky</div></a>
-    <a class="social-link" title="Email me" href="mailto:contact@oneirocosm.com"><img class="logo" width="32px" height="32px" alt="Email logo" src="/assets/mail.svg"><div>contact@oneirocosm.com</div></a>
-
-
-</div>
-</article>
+  </article>
 </MainLayout>
 <style>
-    .social-link {
-        display: flex;
-        gap: 4px;
+  .social-link {
+    display: flex;
+    gap: 4px;
 
-        .logo {
-            object-fit: contain;
-        }
+    .logo {
+      object-fit: contain;
     }
+  }
 </style>

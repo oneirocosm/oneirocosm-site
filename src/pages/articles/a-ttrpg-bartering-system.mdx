@@ -58,12 +58,12 @@ Overall, I think the 2d6 mechanic is a great way to do dice. For one, it's prett
 It might be weird to see that suggested because it seems like each player rolling isn't following that same "bell-curve" philosophy. But I can assure you that it is, and that in fact, the player and the GM will roll close together more often than they will roll far apart. The only difference is, because the second roll is considered negative instead of positive, the entire result will be offset by -7 and centered at 0 instead of 7. If you are willing to believe a random website, here's an example on [AnyDice](https://anydice.com/program/c2c) (consider the player's roll positive and the GM's roll negative). If you need more convincing, here's a little math to show they're the same(don't worry I'll restrain myself from adding too much).
 
 <MathWarning>
-First, remember that when you roll a die, any result is the same. So we can say that:
+  First, remember that when you roll a die, any result is the same. So we can
+  say that:
+  <div class="text-center">d6 = 7 - d6</div>
 
-<div class="text-center">d6 = 7 - d6</div>
-
-Which is just a fancy way to say a 1 is the same as 7 - 6. A 2 is the same as 7 - 5. And so on.
-With this, I can do this fancy trick:
+which is just a fancy way to say a 1 is the same as 7 - 6. A 2 is the same as
+7 - 5. And so on. With this, I can do this fancy trick:
 
 <div class="text-center py-2">d6 - d6 = d6 - [7 - d6]</div>
 <div class="text-center ml-14 py-2">= d6 - 7 + d6</div>

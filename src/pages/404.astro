@@ -3,42 +3,46 @@ import MainLayout from "../layouts/MainLayout.astro";
 ---
 
 <MainLayout>
-<div>
-        <h1 class="text-center">Uh-Oh!</h1>
-        <h2>It looks like I don't have a page for that!</h2>
-        <div class="container">
-        <p class="number">
-        <img class="logo" src="/squidkid-aaaaa.png" alt="Screaming Squidkid Logo">
-            404
-        </p>
-        </div>
-</div>
+  <div>
+    <h1 class="text-center">Uh-Oh!</h1>
+    <h2>It looks like I don't have a page for that!</h2>
+    <div class="container">
+      <p class="number">
+        <img
+          class="logo"
+          src="/squidkid-aaaaa.png"
+          alt="Screaming Squidkid Logo"
+        />
+        404
+      </p>
+    </div>
+  </div>
 </MainLayout>
 <style>
-    .container {
+  .container {
     .number {
-        z-index: 2;
-        font-size: 2000%;
-        text-align: center;
-        padding: 0;
-        margin: 0;
-        transform: scaleY(0.7);
-        line-height: 1;
-        font-family: Montserrat;
-        @media (max-width: 1023px) {
-            font-size: 600%;
-        }
-    .logo {
+      z-index: 2;
+      font-size: 2000%;
+      text-align: center;
+      padding: 0;
+      margin: 0;
+      transform: scaleY(0.7);
+      line-height: 1;
+      font-family: Montserrat;
+      @media (max-width: 1023px) {
+        font-size: 600%;
+      }
+      .logo {
         border-radius: 99999px;
         z-index: -1;
         position: absolute;
         width: 190px;
         transform: translate(301px, 105px) scaleY(1.43);
         @media (max-width: 1023px) {
-            width: 50px;
-            transform: translate(70px, 22px) scaleY(1.43);
+          width: 50px;
+          transform: translate(70px, 22px) scaleY(1.43);
         }
+      }
     }
-    }
-}
+  }
 </style>

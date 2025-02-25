@@ -1,94 +1,93 @@
 ---
-
-const {bgColor="gray", speaker="?", justify="none"} = Astro.props;
+const { bgColor = "gray", speaker = "?", justify = "none" } = Astro.props;
 
 let marginLeft = "0";
 let marginRight = "0";
 if (justify == "left") {
-    marginRight = "20%";
+  marginRight = "20%";
 }
 if (justify == "right") {
-    marginLeft = "5rem";    
+  marginLeft = "5rem";
 }
 
-
 const speakers = {
-'': {
-bgColor: 'bg-gray-500',
-borderColor: 'border-gray-700',
-margin: 'ml-0 mr-0',
-},
-'GM': {
-bgColor: 'bg-purple-500',
-borderColor: 'border-purple-700',
-margin: 'ml-0 mr-20',
-},
-'Thief': {
-bgColor: 'bg-blue-500',
-borderColor: 'border-blue-700',
-margin: 'ml-20 mr-0',
-},
-'Hacker': {
-bgColor: 'bg-green-500',
-borderColor: 'border-green-700',
-margin: 'ml-20 mr-0',
-},
-'Acrobat': {
-bgColor: 'bg-yellow-500',
-borderColor: 'border-yellow-700',
-margin: 'ml-20 mr-0',
-},
-'Assassin': {
-bgColor: 'bg-red-500',
-borderColor: 'border-red-700',
-margin: 'ml-20 mr-0',
-},
-'Other Players': {
-bgColor: 'bg-green-500',
-borderColor: 'border-green-700',
-margin: 'ml-20 mr-0',
-},
+  "": {
+    bgColor: "bg-gray-500",
+    borderColor: "border-gray-700",
+    margin: "ml-0 mr-0",
+  },
+  GM: {
+    bgColor: "bg-purple-500",
+    borderColor: "border-purple-700",
+    margin: "ml-0 mr-20",
+  },
+  Thief: {
+    bgColor: "bg-blue-500",
+    borderColor: "border-blue-700",
+    margin: "ml-20 mr-0",
+  },
+  Hacker: {
+    bgColor: "bg-green-500",
+    borderColor: "border-green-700",
+    margin: "ml-20 mr-0",
+  },
+  Acrobat: {
+    bgColor: "bg-yellow-500",
+    borderColor: "border-yellow-700",
+    margin: "ml-20 mr-0",
+  },
+  Assassin: {
+    bgColor: "bg-red-500",
+    borderColor: "border-red-700",
+    margin: "ml-20 mr-0",
+  },
+  "Other Players": {
+    bgColor: "bg-green-500",
+    borderColor: "border-green-700",
+    margin: "ml-20 mr-0",
+  },
 };
 
 let sep = ":";
 if (!speaker) {
-    sep="";
+  sep = "";
 }
 
-const speakName = speaker === '' ? '' : `${speaker}:`;
+const speakName = speaker === "" ? "" : `${speaker}:`;
 ---
+
 <div class="callout-box">
-    <span class="speaker-name">{speaker}{sep}</span>
-    <slot/>
+  <span class="speaker-name">{speaker}{sep}</span>
+  <slot />
 </div>
-<style define:vars={{bgColor, marginLeft, marginRight}}>
-    .speaker-name {
-        font-weight: bold;
+<style define:vars={{ bgColor, marginLeft, marginRight }}>
+  .speaker-name {
+    font-weight: bold;
+  }
+
+  .callout-box {
+    background-color: oklch(from var(--bgColor) l c h / 0.5);
+    margin-left: var(--marginLeft);
+    margin-right: var(--marginRight);
+    border-radius: 0.5rem;
+    padding: 0.25rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+
+    p {
+      padding: 0;
+      margin: 0;
+      display: block;
+      line-height: 1.8rem;
     }
 
-    .callout-box {
-        background-color: oklch(from var(--bgColor) l c h / 0.5);
-        margin-left: var(--marginLeft);
-        margin-right: var(--marginRight);
-        border-radius: 0.5rem;
-        padding: 0.25rem;
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: baseline;
-        gap: 0.75rem;
-
-        p {
-            padding: 0;
-            margin: 0;
-            display: block;
-            line-height: 1.8rem;
-        }
-
-        em {
-            padding: 0;
-            margin: 0;
-            display: inline;
-            line-height: 1.8rem;
-        }
+    em {
+      padding: 0;
+      margin: 0;
+      display: inline;
+      line-height: 1.8rem;
     }
+  }
 </style>
