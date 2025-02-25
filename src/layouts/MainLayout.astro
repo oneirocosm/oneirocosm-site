@@ -12,21 +12,9 @@ const url = Astro.url.pathname;
 ---
 
 <html lang="en" class="">
-  <!-- 
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width">
-
-    <meta property="og:url" content={ url }>
-    <meta property="og:title" content={ pageName }>
-    <meta property="og:description" content={ pageDescription }>
-
-	<title>{title}</title>
-
-	<link rel="icon" href="/favicon.ico" />
-</head>
--->
-  <BaseHead title={title} description="" />
+  <head>
+    <BaseHead title={title} description="" />
+  </head>
   <body class="">
     <main>
       <nav class="">
