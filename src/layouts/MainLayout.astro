@@ -109,7 +109,7 @@ const url = Astro.url.pathname;
     </main>
   </body>
 </html>
-<style is:inline lang="scss">
+<style lang="scss">
   body {
     min-height: 100vh;
     padding: 0;
@@ -243,11 +243,6 @@ const url = Astro.url.pathname;
 
         .page-content {
           max-width: 65ch;
-
-          img {
-            max-width: 100%;
-            height: auto;
-          }
         }
       }
 
@@ -265,20 +260,6 @@ const url = Astro.url.pathname;
     }
   }
 
-  figure {
-    margin: auto;
-    width: 75%;
-    height: auto;
-
-    figcaption {
-      p {
-        margin-top: 0;
-        margin-bottom: 2rem;
-        font-size: 1rem;
-        line-height: 1.2rem;
-      }
-    }
-  }
   @media (max-width: 768px) {
     body {
       main {
@@ -303,6 +284,27 @@ const url = Astro.url.pathname;
             line-height: 1.8;
           }
         }
+      }
+    }
+  }
+</style>
+<style is:inline>
+  figure {
+    margin: auto;
+    width: 75%;
+    height: auto;
+
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    figcaption {
+      p {
+        margin-top: 0;
+        margin-bottom: 2rem;
+        font-size: 1rem;
+        line-height: 1.2rem;
       }
     }
   }
