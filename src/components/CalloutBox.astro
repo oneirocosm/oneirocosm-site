@@ -52,15 +52,13 @@ let sep = ":";
 if (!speaker) {
   sep = "";
 }
-
-const speakName = speaker === "" ? "" : `${speaker}:`;
 ---
 
 <div class="callout-box">
   <span class="speaker-name">{speaker}{sep}</span>
   <slot />
 </div>
-<style define:vars={{ bgColor, marginLeft, marginRight }}>
+<style define:vars={{ bgColor, marginLeft, marginRight }} lang="scss">
   .speaker-name {
     font-weight: bold;
   }
