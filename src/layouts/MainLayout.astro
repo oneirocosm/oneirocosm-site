@@ -55,22 +55,22 @@ const url = Astro.url.pathname;
           <!-- Secondary Navbar items -->
           <div class="navbar-secondary">
             <DarkModeSwitch />
+            <!-- Mobile menu button -->
+            <button class="mobile-menu-button">
+              <svg
+                class="mobile-menu-button__icon"
+                x-show="!showMenu"
+                fill="none"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path d="M4 6h16M4 12h16M4 18h16"></path>
+              </svg>
+            </button>
           </div>
-          <!-- Mobile menu button -->
-          <button class="mobile-menu-button">
-            <svg
-              class="mobile-menu-button__icon"
-              x-show="!showMenu"
-              fill="none"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path d="M4 6h16M4 12h16M4 18h16"></path>
-            </svg>
-          </button>
         </div>
         <!-- mobile menu -->
         <div class="mobile-menu hidden">
@@ -137,6 +137,8 @@ const url = Astro.url.pathname;
           align-items: center;
           margin: auto;
           color: var(--header-text-color);
+          margin: 0 auto;
+          padding: 0 5%;
 
           .all-links {
             display: flex;
@@ -179,26 +181,26 @@ const url = Astro.url.pathname;
 
           .navbar-secondary {
             display: flex;
-          }
-
-          .mobile-menu-button {
-            background-color: transparent;
-            border: 0;
-            cursor: pointer;
-            height: 24px;
-            width: 24px;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            color: inherit;
-            .mobile-menu-button__icon {
-              width: 24px;
+            gap: 10px;
+            .mobile-menu-button {
+              background-color: transparent;
+              border: 0;
+              cursor: pointer;
               height: 24px;
-              display: block;
+              width: 24px;
+              padding: 0;
+              margin: 0;
+              display: none;
+              align-items: center;
+              color: inherit;
+              .mobile-menu-button__icon {
+                width: 24px;
+                height: 24px;
+                display: block;
 
-              &:hover {
-                color: var(--accent);
+                &:hover {
+                  color: var(--accent);
+                }
               }
             }
           }
@@ -268,6 +270,11 @@ const url = Astro.url.pathname;
             .all-links {
               .navbar {
                 display: none;
+              }
+            }
+            .navbar-secondary {
+              .mobile-menu-button {
+                display: flex;
               }
             }
           }
