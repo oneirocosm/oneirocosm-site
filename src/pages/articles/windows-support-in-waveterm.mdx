@@ -3,6 +3,7 @@ title: "Windows Support In Waveterm"
 layout: "../../layouts/MainLayout.astro"
 description: "The Process of Making a Go Application Work on Windows"
 ---
+
 As of version 0.7, Wave terminal was limited to run on MacOS and Linux. It was enough to call the app cross platform, but that always rang a little hollow to me. And a lot of our users agreed.
 
 The main hurdle was that the architecture of version 0.7 made it extremely difficult. A lot of the focus was on wrapping shell behaviors and storing state. And while it would be possible to extend that to powershell, it would require a lot of work. And that's in addition to all of the other work required to make the app cross platform. But once it became clear that version 0.8 would require a significant rewrite, the doors opened up. Without the need to fully wrap powershell, the work required felt reasonable. And not long after, we were able to make a couple changes to our prototype to allow it to run on windows.
@@ -29,15 +30,13 @@ For the backend, we had several reasons for choosing Go from the start, one of t
 
 Actually getting started wasn't too difficult when it came down to it. For dependencies, most things were really straightforward. The most complicated was getting Task to work, which was mostly adding something to my PATH on Windows. But aside from that, the actual build tools were relatively simple to set up. From there, I just had to open the project and check various lints in order to find the immediate problems. Quickly, it became clear that there were two clear categories these problems fell into:
 
-* problems that would have to be solved in order for the app to launch
-    
-* problems that, while important, would not actually get in the way from the app launching
-    
+- problems that would have to be solved in order for the app to launch
+- problems that, while important, would not actually get in the way from the app launching
 
 | critical for the initial launch | not critical for the initial launch |
-| --- | --- |
-| cross-platform file paths | lock file |
-| signal that the backend started | pty |
+| ------------------------------- | ----------------------------------- |
+| cross-platform file paths       | lock file                           |
+| signal that the backend started | pty                                 |
 
 ## Step 1: Defer problems not relevant to building the app
 
@@ -45,10 +44,8 @@ Contrary to what you might think, dealing with the second category first made a 
 
 For us, this meant we had to defer
 
-* lock file
-    
-* pty fixes
-    
+- lock file
+- pty fixes
 
 ## Step 2: Solve the problems that are critical for the launch
 
@@ -72,13 +69,14 @@ homeVar, err := os.UserHomeDir()
 
 ```diff
 func GetHomeDir() string {
--	homeVar := os.Getenv(HomeVarName)
--	if homeVar == "" {
+-   homeVar := os.Getenv(HomeVarName)
+-   if homeVar == "" {
 +   homeVar, err := os.UserHomeDir()
 +   if err != nil {
-		return "/"
-	}
-	return homeVar
+        return "/"
+    }
+    return homeVar
+}
 ```
 
 ### Signal that the backend started
@@ -109,10 +107,10 @@ At this point, all of the obvious bugs were fixed, but that didn't mean it was o
 I only had one major issue at this point, but it took most of my time to solve. Updating the list, it was now:
 
 | critical for the initial launch | not critical for the initial launch |
-| --- | --- |
-| cross plaform paths | lock file |
-| signal that the backend started | pty |
-| ensure the backend starts |  |
+| ------------------------------- | ----------------------------------- |
+| cross plaform paths             | lock file                           |
+| signal that the backend started | pty                                 |
+| ensure the backend starts       |                                     |
 
 ### Ensuring the Backend Starts
 
