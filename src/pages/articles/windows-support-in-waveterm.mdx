@@ -4,9 +4,9 @@ layout: "../../layouts/MainLayout.astro"
 description: "The Process of Making a Go Application Work on Windows"
 ---
 
-As of version 0.7, Wave terminal was limited to run on MacOS and Linux. It was enough to call the app cross platform, but that always rang a little hollow to me. And a lot of our users agreed.
+As of version 0.7, Wave terminal was limited to run on MacOS and Linux. It was enough to call the app cross platform, but that always rang a little hollow to me without Windows support. And a lot of our users agreed.
 
-The main hurdle was that the architecture of version 0.7 made it extremely difficult. A lot of the focus was on wrapping shell behaviors and storing state. And while it would be possible to extend that to powershell, it would require a lot of work. And that's in addition to all of the other work required to make the app cross platform. But once it became clear that version 0.8 would require a significant rewrite, the doors opened up. Without the need to fully wrap powershell, the work required felt reasonable. And not long after, we were able to make a couple changes to our prototype to allow it to run on windows.
+The main hurdle to adding Windows as a build target was simply that the architecture of version 0.7 made it extremely difficult. A lot of the focus was on wrapping shell behaviors and storing state. And while it would be possible to extend that to Powershell, it would require a lot of work. And that's in addition to all of the other work required to make the app cross platform. But once it became clear that version 0.8 would require a significant rewrite, the door to getting a Windows build opened up. Without the need to fully wrap Powershell, the work required felt reasonable. And it turns out, it wouldn't take too many changes to allow our prototype to run on Windows.
 
 ## The Building Blocks
 
@@ -18,9 +18,9 @@ Web technologies are perhaps the most accessible way to write cross-platform pro
 
 ### Electron
 
-It may seem odd to separate Electron out from Typescript, but I think it's an important distinction. One of the main reasons is we actually tried to switch to Wails v3 while writing to v0.8. I think Wails would have also been viable for this, but for other reasons, we had to switch back to electron for the time being.
+It may seem odd to separate Electron out from TypeScript, but I think it's an important distinction. One of the main reasons is we actually tried to switch to Wails v3 while writing to v0.8. I think Wails would have also been viable for this, but for different reasons (mostly related to performance with Webkit), we had to switch back to Electron.
 
-That said, I do need to emphasize that Electron did make the cross-platform jump even easier. Unlike Tauri and Wails, Electron bundles a Chromium installation which means the underlying browser will be the same on all platforms. This has some immediate benefits (no need for a CSS Reset), but it also has meant that I've been able to assume the same behavior from the underlying browser implementation on all platforms which was not true while we were trying Wails. That's not to say that this makes Electron better than Wails and Tauri, it just means that it simplifies this specific aspect of development.
+That said, I do need to emphasize that Electron did make the cross-platform jump even easier. Unlike Tauri and Wails, Electron bundles a Chromium installation which means the underlying browser will be the same on all platforms. This has some immediate benefits (no need to account for different CSS rules), but it also has meant that I've been able to assume the same behavior from the underlying browser implementation on all platforms which was not true while we were trying Wails. That's not to say that this makes Electron better than Wails and Tauri, it just means that it simplifies this specific aspect of development.
 
 ### Go
 
@@ -28,32 +28,29 @@ For the backend, we had several reasons for choosing Go from the start, one of t
 
 ## Getting Started
 
-Actually getting started wasn't too difficult when it came down to it. For dependencies, most things were really straightforward. The most complicated was getting Task to work, which was mostly adding something to my PATH on Windows. But aside from that, the actual build tools were relatively simple to set up. From there, I just had to open the project and check various lints in order to find the immediate problems. Quickly, it became clear that there were two clear categories these problems fell into:
+Surprisingly getting started wasn't too difficult. For dependencies, most things were really straightforward. The most complicated was getting the Task build system to work, which was mostly since I needed to add it to my PATH on Windows. But aside from that, the actual build tools were relatively simple to set up. From there, I just had to open the project and start checking various lints. Quickly, it became clear that there were two clear categories these problems fell into:
 
-- problems that would have to be solved in order for the app to launch
-- problems that, while important, would not actually get in the way from the app launching
+1. problems that would have to be solved in order for the app to launch
+2. problems that, while important, would not actually get in the way from the app launching
 
 | critical for the initial launch | not critical for the initial launch |
 | ------------------------------- | ----------------------------------- |
 | cross-platform file paths       | lock file                           |
-| signal that the backend started | pty                                 |
+| signal that the backend started | PTY                                 |
 
 ## Step 1: Defer problems not relevant to building the app
 
-Contrary to what you might think, dealing with the second category first made a lot of sense. Most of those were harder problems to solve, and it wasn't necessary to deal with them yet. So, I disabled them—typically by deleting or commenting them out. While it is tempting to knock out the easier ones, there is always the chance that the fix would end up causing an issue of its own. There is always time to address it once it the app is running.
+Contrary to what you might think, dealing with the second category first made a lot of sense. Most of those were harder problems to solve, and it wasn't necessary to solve them yet. So, I disabled them—typically by deleting or commenting them out. While it was tempting to fix some of the easier ones, there was a chance that those fixes would end up causing an issues of their own (for instance, circular dependencies). And there would be time to address them once the app was up and running.
 
-For us, this meant we had to defer
-
-- lock file
-- pty fixes
+For us, this meant we had to defer lock file and PTY fixes.
 
 ## Step 2: Solve the problems that are critical for the launch
 
 ### Cross Platform Paths
 
-One well-known difference between Unix systems and Windows systems is that the filepaths are written differently. In particular, Unix is known for using the `/` (forward slash) for subdirectories while Windows uses the `\` (backslash). These days, that is less true, as powershell can now accept the forward slash in most (but not all) cases. Still, if you are referring to the root directory (or a specific drive on Windows) or if you're using the command prompt, this quickly gets more complicated.
+One well-known difference between Unix systems and Windows systems is that the filepaths are written differently. In particular, Unix is known for using the `/` (forward slash) for subdirectories while Windows uses the `\` (backslash). These days, that is less true, as Powershell can now accept the forward slash in most (but not all) cases. Still, if you are referring to the root directory (or a specific drive on Windows) or if you're using the command prompt instead of Powershell, this gets more complicated.
 
-For the frontend, we were already using JavaScript's `"path"` module, so no change was required. But on the backend, there were a few places where the module we used wasn't cross-platform. Luckily, Go makes this relatively simple to fix. Any time you are importing the `"path"` module, import `"path/filepath"` instead. This will make path management cross-platform on the backend—at least for simple cases. Which is all we needed to cover at this point.
+For the frontend, we were already using TypeScript's `"path"` module, so no change was required. But on the backend, there were a few places where the module we used wasn't cross-platform. Luckily, Go makes this relatively simple to fix. Any time you are importing the `"path"` module, import `"path/filepath"` instead. This made path management cross-platform on the backend&mdash;at least for simple cases. Which is all we needed to cover at this point.
 
 Of course, the home directory was a different issue that needed to be handled. On the frontend, this meant replacing `process.env.HOME` with the more generic `os.homedir()`. And similarly, on the backend, it meant replacing:
 
@@ -66,6 +63,8 @@ with the more flexible
 ```go
 homeVar, err := os.UserHomeDir()
 ```
+
+which meant the `GetHomeDir` function was changed as follows:
 
 ```diff
 func GetHomeDir() string {
@@ -102,40 +101,40 @@ rlStderr.on("line", (line) => {
 
 ## Step 3: Solve the problems you don't know about that are critical for the launch
 
-At this point, all of the obvious bugs were fixed, but that didn't mean it was over. There were still a couple bugs that weren't apparent until running the app. This was overall, the most painful part of the process—especially for bugs that involved communication between the frontend and backend since those weren't captured in logs at the time.
+At this point, all of the obvious bugs were fixed, but that didn't mean it was over. There were still a couple bugs that weren't apparent until running the app. This was overall the most painful part of the process&mdash;especially for bugs that involved communication between the frontend and backend since those weren't captured in logs at the time.
 
-I only had one major issue at this point, but it took most of my time to solve. Updating the list, it was now:
+This was particularly relevant for starting the backend from the Electron code. And it was the part of this step that took the longest to solve. And it meant the list of tasks to complete was expanded to cover:
 
 | critical for the initial launch | not critical for the initial launch |
 | ------------------------------- | ----------------------------------- |
 | cross plaform paths             | lock file                           |
-| signal that the backend started | pty                                 |
+| signal that the backend started | PTY                                 |
 | ensure the backend starts       |                                     |
 
 ### Ensuring the Backend Starts
 
 This was a simple change overall but it was hard to figure out what the causes were since the logs weren't helping a ton. To make a long story short, I did a lot of print statement debugging before realizing that the backend application never started running.
 
-So, I tried manually launching it myself to discover that I was unable to launch it either. It turns out that was because windows required the file to have a `.exe` extension to launch it. So, I added a simple change to the taskfile:
+So, I tried manually launching it myself to discover that I was unable to launch it either. It turns out that was because windows required the file to have a `.exe` extension to launch it. So, I added a simple change to the Taskfile:
 
 ```diff
 build:server:
     cmds:
--        - go build -o dist/bin/wavesrv cmd/server/main-server.go
-+	     - go build -o dist/bin/wavesrv{{exeExt}} cmd/server/main-server.go
+-       - go build -o dist/bin/wavesrv cmd/server/main-server.go
++       - go build -o dist/bin/wavesrv{{exeExt}} cmd/server/main-server.go
     sources:
         - "cmd/server/*.go"
         - "pkg/**/*.go"
     generates:
--        - dist/bin/wavesrv
-+        - dist/bin/wavesrv{{exeExt}}
+-       - dist/bin/wavesrv
++       - dist/bin/wavesrv{{exeExt}}
     deps:
         - go:mod:tidy
 ```
 
-Taskfile is flexible for this sort of thing, so it was straightforward to make the extension cross-platform.
+Taskfiles are relatively flexible for this sort of thing, so it was straightforward to make the extension cross-platform.
 
-But solving that didn't fix the issue entirely—in fact—I created a new problem. Because the taskfile had been changed to add a `.exe` extension on Windows, the executable called by the frontend also had to be updated to include the `.exe` extension when run on Windows.
+But solving that didn't fix the issue entirely&mdash;in fact&mdash;I created a new problem. Because the taskfile had been changed to add a `.exe` extension on Windows, the executable called by the frontend also had to be updated to include the `.exe` extension when run on Windows.
 
 It is also worth mentioning that I had some confusion around adding quotation marks around the path and whether or not an ampersand was necessary. The short answer is that it is not necessary when using `child_process.spawn` without the `"shell"` parameter being true. I ended up adding it at the time, but it was not necessary and ended up causing problems down the line. But if you decide to use something like `child_process.exec`, a shell is spawned, so you do have to be careful with this syntax.
 
@@ -149,9 +148,9 @@ Unfortunately, this eventually (a few months later) caused issues when the lock 
 
 ## Step 6: Add back the hard problems that you commented out
 
-The remaining issue that had been commented out was the pty, or pseudoterminal. And there unfortunately wasn't a good fix for it that was immediately apparent. We had previously been using the excellent "[https://github.com/creack/pty](https://github.com/creack/pty)" library, but it did not have windows support. There was an [open PR](https://github.com/creack/pty/pull/155) to add it, but I could not justify making the change at the time. After all, the branch was starting to diverge from the `main` branch, and this was going to require a couple more changes on our end.
+The remaining issue that had been commented out was the PTY, or pseudoterminal. And there unfortunately wasn't a good fix for it that was immediately apparent. We had previously been using the excellent "[https://github.com/creack/pty](https://github.com/creack/pty)" library, but it did not have windows support. There was an [open PR](https://github.com/creack/pty/pull/155) to add it, but I could not justify making the change at the time. After all, the branch was starting to diverge from the `main` branch, and this was going to require a couple more changes on our end.
 
-Rather than making a decision at that time, we decided to hold off and merge the currently existing changes. That meant that if we did decide to go forward with the windows build, we would be in a much better point to pick it up and go forward. So, I just undid the comments I added to the pty handling and checked in those changes.
+Rather than making a decision at that time, we decided to hold off and merge the currently existing changes. That meant that if we did decide to go forward with the windows build, we would be in a much better point to pick it up and go forward. So, I just undid the comments I added to the PTY handling and checked in those changes.
 
 ## Step 7: Test your code on the original platform
 
@@ -201,7 +200,7 @@ which returns
 go: github.com/photostorm/pty@871f917: github.com/photostorm/pty@v1.1.21-0.20240414153732-871f917c63a2: invalid version: go.mod has post-v1 module path "github.com/creack/pty/v2" at revision 871f917c63a2
 ```
 
-Which we don't want. So I had to use an earlier branch to get it to work. I ended up targeting the commit with hash `3135450`. Using that one, I enter
+which we don't want. So I had to use an earlier branch to get it to work. I ended up targeting the commit with hash `3135450`. Using that one, I enter
 
 ```bash
 go get github.com/photostorm/pty@3135450
@@ -219,13 +218,13 @@ So, I can add `replace` [`github.com/creack/pty`](http://github.com/creack/pty) 
 
 ### Breaking Changes?
 
-With that change, there were a couple small things that broke. For one, `os.File` is no longer the handle for `pty` and `tty` since windows does not work with those. Instead, Go interface for each `pty.Pty` and `pty.Tty` are provided. So I just need to change our internal types to match up with that to resolve the compiler errors.
+With that change, there were a couple small things that broke. For one, `os.File` is no longer the handle for `PTY` and `TTY` since windows does not work with those. Instead, Go interface for each `pty.Pty` and `pty.Tty` are provided. So I just need to change our internal types to match up with that to resolve the compiler errors.
 
 ### Closing the PTY
 
-Of course, due to the bugs existing in this PR, that's not the entire story. But at the very least, it is possible to work around them for the time being. The most obvious one of these is that the app would crash on Windows when a widget was closed. This was because the branch I was using had a bug that when a pty was closed twice, it would cause a segfault. I could have made a complicated wrapper around it using `sync.Once`, but in this case, it was much easier to simply find the second place the pty was closed and to not call that case on Windows. It's not the most robust solution, but it gets the job done in the meantime.
+Of course, due to the bugs existing in this PR, that's not the entire story. But at the very least, it is possible to work around them for the time being. The most obvious one of these is that the app would crash on Windows when a widget was closed. This was because the branch I was using had a bug that when a PTY was closed twice, it would cause a segfault. I could have made a complicated wrapper around it using `sync.Once`, but in this case, it was much easier to simply find the second place the PTY was closed and to not call that case on Windows. It's not the most robust solution, but it gets the job done in the meantime.
 
-But with this fixed, we had a fully fledged terminal application that we could run on Mac, Linux, and Windows. We could open a pty and close the widget that contained it without issue. But of course, there was still a little more to be done.
+But with this fixed, we had a fully fledged terminal application that we could run on Mac, Linux, and Windows. We could open a PTY and close the widget that contained it without issue. But of course, there was still a little more to be done.
 
 ## Step 10: Powershell
 
@@ -237,21 +236,27 @@ So instead of going that route, I decided to source a regular `*.ps1` file with 
 
 ## My Overall Thoughts
 
-Overall, I'd say expanding the app to Windows has been a resounding success. It can make certain features more difficult to implement at times, but the benefits have significantly outweighed the drawbacks. Because of this, we have brought Wave Terminal to a whole new audience. And the ability for me to use the same terminal regardless of what operating system I'm working on has been wonderful!
+Overall, I'd say the act of expanding the app to Windows was itself a resounding success. However, that does not mean it doesn't come without it's own issues. Most of the cross-platform problems we have had to deal with came up after it was implemented and typically revolved around testing the code before releases and dealing with platform-specific bugs. And that has meant that development has slowed down to handle these cases. It hasn't been a drastic slowdown, but it does add up when it needs to be considered for each release.
 
-Overall, I think making your app cross-platform is certainly worth considering. And if you decide to do so, here are my takeaways:
+So was it worth it? In one sense it absolutely was due to the increase in number of users. Averaging installs over the course of a couple months, I estimated we had about a 64% increase in downloads due to this feature. Which on the surface sounds great, but it is worth keeping in mind that this was a fairly static multiplier. It did not bring exponential growth to the app. And while not every feature needs to do that, it is something that should be weighed when developing an application. Is the growth that it brings worth the tradeoff of debugging and testing introduced in the future?
+
+In my personal opinion, I think it was worthwhile, but I can see arguments made against that. Perhaps it makes more sense to get a solid foundation on users on a limited set of platforms before expanding. After all, a lot of apps seem to be taking that approach these days. Of course, the downside to that approach is that the more developed the app is, the more difficult it will be to adapt down the line.
+
+I suppose a third approach could be taken where work is done behind the scenes to keep the application in line with a cross-platform app without actually making it cross platform. In that case, the debugging is put off entirely, and the app does not need to be tested on multiple platforms until the jump is made. But the pace of development will likely still be slowed down by this and there won't be much benefit to show for it.
+
+There is no one size fits all solution to this. Whether or not it makes sense to make an app cross-platform depends on your usecase and your userbase. But if you do decide to make your app cross platform, here are my takeaways:
 
 ### Consider Your Base Technologies Carefully
 
 Since we had already been targeting cross-platform Unix and Mac support, the choices of Go, Typescript, and Electron left us in a good place. If any one of these technologies was not sufficiently cross-platform, it would have required a major rewrite to get Windows support to work. So if there is a chance you will make your application cross-platform, it is best to keep that in mind from the start. Even with that already considered, we still had a couple smaller dependencies to work out. But they were easy to switch out with alternatives since they were a smaller part of the application.
 
-### Earlier Rather than Later
+### Balancing Earlier Cross-Platform Support and Later Cross-Platform Support
 
-For us, this change was done relatively early in the rewrite. To put a number on it, it was done one month and six days into the v0.8.0 rewrite. The later this choice had been made, the more changes would have been required. Making the change early on, even if it didn't have the pty support, put us on a good path to making this possible.
+For us, this change was done relatively early in the rewrite. To put a number on it, it was done one month and six days into the v0.8.0 rewrite. The later this choice had been made, the more changes would have been required. Making the change early on, even if it didn't have the PTY support, put us on a good path to making this possible, but it also meant that we had to deal with the overhead of the additional platform throughout more of the development process. If you really want to commit to a cross platform application, then starting to do so immedately has its benefits. But if you want to see how users approach the product before deciding that, you may be better off waiting until later.
 
 ### Isolate Incompatibilities
 
-Gettings a minimal version on the app working on windows as soon as possible was critical. In my opinion, the best first step to testing your code is ensuring that it compiles. The sooner you are able to do that, the sooner you will be able to use it to your advantage while making additional features work cross-platform.
+Gettings a minimal version on the app working on Windows was critical. The best first step to testing your code is ensuring that it compiles. The sooner you are able to do that, the sooner you will be able to use it to make the rest of the debugging easier. And the sooner you will be able to add back features that you had to temporarily strip away to get the initial code compiling.
 
 ### Don't Force Yourself to do the Whole Thing at Once
 

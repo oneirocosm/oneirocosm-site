@@ -21,9 +21,9 @@
   --color-text: rgb(0, 0, 0);
   --light-display: inline;
   --dark-display: none;
-  --table-header: #DDD;
-  --table-row-1: #CCC;
-  --table-row-2: #BCBCBC;
+  --table-header: #ddd;
+  --table-row-1: #ccc;
+  --table-row-2: #bcbcbc;
 
   &.dark {
     --color-sitebg: rgb(55, 65, 81);
@@ -164,6 +164,7 @@ table {
   border-spacing: 0;
   border-collapse: separate;
   margin-bottom: 1rem;
+  margin-top: 1rem;
   th {
     padding: 4px 13px;
     background-color: var(--table-header);
@@ -175,14 +176,22 @@ table {
   tr {
     background-color: var(--table-row-1);
   }
-  tr:nth-child(even){
+  tr:nth-child(even) {
     background-color: var(--table-row-2);
   }
-  tr:first-child th:first-child { border-top-left-radius: 6px; }
-  tr:first-child th:last-child { border-top-right-radius: 6px; }
+  tr:first-child th:first-child {
+    border-top-left-radius: 6px;
+  }
+  tr:first-child th:last-child {
+    border-top-right-radius: 6px;
+  }
 
-  tr:last-child td:first-child { border-bottom-left-radius: 6px; }
-  tr:last-child td:last-child { border-bottom-right-radius: 6px; }
+  tr:last-child td:first-child {
+    border-bottom-left-radius: 6px;
+  }
+  tr:last-child td:last-child {
+    border-bottom-right-radius: 6px;
+  }
 }
 img {
   border-radius: 8px;
