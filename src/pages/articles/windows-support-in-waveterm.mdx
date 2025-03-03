@@ -208,17 +208,21 @@ go get github.com/photostorm/pty@3135450
 
 which gives the output
 
-```bash
-go: github.com/photostorm/pty@3135450 (v1.1.19-0.20230903182454-31354506054b) requires github.com/photostorm/pty@v1.1.19-0.20230903182454-31354506054b: parsing go.mod:
-        module declares its path as: github.com/creack/pty
-                but was required as: github.com/photostorm/pty
+```
+go: github.com/photostorm/pty@3135450 (v1.1.19-0.20230903182454-31354506054b) requires github.com/photostorm/pty@v1.1.19-0.20230903182454-31354506054b: 
+parsing go.mod: module declares its path as: github.com/creack/pty
+but was required as: github.com/photostorm/pty
 ```
 
-So, I can add `replace` [`github.com/creack/pty`](http://github.com/creack/pty) `=>` [`github.com/photostorm/pty`](http://github.com/photostorm/pty) `v1.1.19-0.20230903182454-31354506054b` to the bottom of my `go.mod` file. Then I run `go mod tidy` to make sure everything's working right, and now, I'm using the forked version of the library.
+So, I can add 
+```
+replace github.com/creack/pty => github.com/photostorm/pty v1.1.19-0.20230903182454-31354506054b
+```
+to the bottom of my `go.mod` file. Then I run `go mod tidy` to make sure everything's working right, and now, I'm using the forked version of the library.
 
 ### Breaking Changes?
 
-With that change, there were a couple small things that broke. For one, `os.File` is no longer the handle for `PTY` and `TTY` since windows does not work with those. Instead, Go interface for each `pty.Pty` and `pty.Tty` are provided. So I just need to change our internal types to match up with that to resolve the compiler errors.
+With that change, there were a couple small things that broke. For one, `os.File` is no longer the handle for `pty` and `tty` since windows does not work with those. Instead, Go interface for each `pty.Pty` and `pty.Tty` are provided. So I just need to change our internal types to match up with that to resolve the compiler errors.
 
 ### Closing the PTY
 
