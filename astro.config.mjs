@@ -8,4 +8,12 @@ import sitemap from "@astrojs/sitemap";
 export default defineConfig({
   site: "https://oneirocosm.com",
   integrations: [mdx(), sitemap()],
+  markdown: {
+    shikiConfig: {
+      themes: {
+        light: "one-light",
+        dark: "one-dark-pro",
+      },
+    },
+  },
 });

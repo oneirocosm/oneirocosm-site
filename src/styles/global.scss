@@ -21,13 +21,45 @@
   --color-text: rgb(0, 0, 0);
   --light-display: inline;
   --dark-display: none;
+  --table-header: #ddd;
+  --table-row-1: #ccc;
+  --table-row-2: #bcbcbc;
 
   &.dark {
     --color-sitebg: rgb(55, 65, 81);
     --color-text: rgb(209, 213, 219);
     --light-display: none;
     --dark-display: inline;
+    --table-header: #333;
+    --table-row-1: #444;
+    --table-row-2: #4a4a4a;
   }
+}
+html code {
+  color: #383a42;
+  background-color: #fafafa;
+}
+html.dark code {
+  color: #abb2bf;
+  background-color: #282c34;
+}
+html.light .astro-code,
+html.light .astro-code span {
+  color: var(--shiki-light) !important;
+  background-color: var(--shiki-light-bg) !important;
+  /* Optional, if you also want font styles */
+  font-style: var(--shiki-light-font-style) !important;
+  font-weight: var(--shiki-light-font-weight) !important;
+  text-decoration: var(--shiki-light-text-decoration) !important;
+}
+html.dark .astro-code,
+html.dark .astro-code span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
+  /* Optional, if you also want font styles */
+  font-style: var(--shiki-dark-font-style) !important;
+  font-weight: var(--shiki-dark-font-weight) !important;
+  text-decoration: var(--shiki-dark-text-decoration) !important;
 }
 @font-face {
   font-family: "Atkinson";
@@ -129,6 +161,37 @@ input {
 }
 table {
   width: 100%;
+  border-spacing: 0;
+  border-collapse: separate;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+  th {
+    padding: 4px 13px;
+    background-color: var(--table-header);
+    border-bottom: 1px solid black;
+  }
+  td {
+    padding: 4px 13px;
+  }
+  tr {
+    background-color: var(--table-row-1);
+  }
+  tr:nth-child(even) {
+    background-color: var(--table-row-2);
+  }
+  tr:first-child th:first-child {
+    border-top-left-radius: 6px;
+  }
+  tr:first-child th:last-child {
+    border-top-right-radius: 6px;
+  }
+
+  tr:last-child td:first-child {
+    border-bottom-left-radius: 6px;
+  }
+  tr:last-child td:last-child {
+    border-bottom-right-radius: 6px;
+  }
 }
 img {
   border-radius: 8px;
@@ -136,7 +199,7 @@ img {
 code {
   padding: 2px 5px;
   background-color: rgb(var(--gray-light));
-  border-radius: 2px;
+  border-radius: 6px;
 }
 pre {
   padding: 1.5em;

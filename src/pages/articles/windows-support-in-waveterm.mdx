@@ -1,0 +1,263 @@
+---
+title: "Windows Support In Waveterm"
+layout: "../../layouts/MainLayout.astro"
+description: "The Process of Making a Go Application Work on Windows"
+---
+
+As of version 0.7, Wave terminal was limited to run on MacOS and Linux. It was enough to call the app cross platform, but that always rang a little hollow to me without Windows support. And a lot of our users agreed.
+
+The main hurdle to adding Windows as a build target was simply that the architecture of version 0.7 made it extremely difficult. A lot of the focus was on wrapping shell behaviors and storing state. And while it would be possible to extend that to Powershell, it would require a lot of work. And that's in addition to all of the other work required to make the app cross platform. But once it became clear that version 0.8 would require a significant rewrite, the door to getting a Windows build opened up. Without the need to fully wrap Powershell, the work required felt reasonable. And it turns out, it wouldn't take too many changes to allow our prototype to run on Windows.
+
+## The Building Blocks
+
+Starting with an app that was cross-platform between MacOS and Linux meant that a lot of the foundations for Windows support was already in place. A couple of the foundational building blocks included Typescript, Electron, and Go.
+
+### Typescript
+
+Web technologies are perhaps the most accessible way to write cross-platform programs. The existence of the web browser means that most of the compatibility has been worked out from the start. And the remaining incompatibilities are easier to rein in. Honestly, this one is really simple and there's not too much more to say about it.
+
+### Electron
+
+It may seem odd to separate Electron out from TypeScript, but I think it's an important distinction. One of the main reasons is we actually tried to switch to Wails v3 while writing to v0.8. I think Wails would have also been viable for this, but for different reasons (mostly related to performance with Webkit), we had to switch back to Electron.
+
+That said, I do need to emphasize that Electron did make the cross-platform jump even easier. Unlike Tauri and Wails, Electron bundles a Chromium installation which means the underlying browser will be the same on all platforms. This has some immediate benefits (no need to account for different CSS rules), but it also has meant that I've been able to assume the same behavior from the underlying browser implementation on all platforms which was not true while we were trying Wails. That's not to say that this makes Electron better than Wails and Tauri, it just means that it simplifies this specific aspect of development.
+
+### Go
+
+For the backend, we had several reasons for choosing Go from the start, one of them being how simple it is to write cross-platform code in it. I have been very impressed by the number of things that simply are the same across a ton of different platforms. And in the rare cases where they aren't the conditional compilation is relatively simple to set up. Things can get slightly more complicated when CGO gets involved, but with some changes to the build system, it isn't too hard to handle.
+
+## Getting Started
+
+Surprisingly getting started wasn't too difficult. For dependencies, most things were really straightforward. The most complicated was getting the Task build system to work, which was mostly since I needed to add it to my PATH on Windows. But aside from that, the actual build tools were relatively simple to set up. From there, I just had to open the project and start checking various lints. Quickly, it became clear that there were two clear categories these problems fell into:
+
+1. problems that would have to be solved in order for the app to launch
+2. problems that, while important, would not actually get in the way from the app launching
+
+| critical for the initial launch | not critical for the initial launch |
+| ------------------------------- | ----------------------------------- |
+| cross-platform file paths       | lock file                           |
+| signal that the backend started | PTY                                 |
+
+## Step 1: Defer problems not relevant to building the app
+
+Contrary to what you might think, dealing with the second category first made a lot of sense. Most of those were harder problems to solve, and it wasn't necessary to solve them yet. So, I disabled them—typically by deleting or commenting them out. While it was tempting to fix some of the easier ones, there was a chance that those fixes would end up causing an issues of their own (for instance, circular dependencies). And there would be time to address them once the app was up and running.
+
+For us, this meant we had to defer lock file and PTY fixes.
+
+## Step 2: Solve the problems that are critical for the launch
+
+### Cross Platform Paths
+
+One well-known difference between Unix systems and Windows systems is that the filepaths are written differently. In particular, Unix is known for using the `/` (forward slash) for subdirectories while Windows uses the `\` (backslash). These days, that is less true, as Powershell can now accept the forward slash in most (but not all) cases. Still, if you are referring to the root directory (or a specific drive on Windows) or if you're using the command prompt instead of Powershell, this gets more complicated.
+
+For the frontend, we were already using TypeScript's `"path"` module, so no change was required. But on the backend, there were a few places where the module we used wasn't cross-platform. Luckily, Go makes this relatively simple to fix. Any time you are importing the `"path"` module, import `"path/filepath"` instead. This made path management cross-platform on the backend&mdash;at least for simple cases. Which is all we needed to cover at this point.
+
+Of course, the home directory was a different issue that needed to be handled. On the frontend, this meant replacing `process.env.HOME` with the more generic `os.homedir()`. And similarly, on the backend, it meant replacing:
+
+```go
+homeVar := os.Getenv(HomeVarName)
+```
+
+with the more flexible
+
+```go
+homeVar, err := os.UserHomeDir()
+```
+
+which meant the `GetHomeDir` function was changed as follows:
+
+```diff
+func GetHomeDir() string {
+-   homeVar := os.Getenv(HomeVarName)
+-   if homeVar == "" {
++   homeVar, err := os.UserHomeDir()
++   if err != nil {
+        return "/"
+    }
+    return homeVar
+}
+```
+
+### Signal that the backend started
+
+Previously, we had been using `syscall.SIGUSR1` as a way to signal that the backend was ready, and the frontend could continue. Unfortunately, Windows [does not support](https://learn.microsoft.com/en-gb/cpp/c-runtime-library/reference/signal?view=msvc-170#remarks) the SIGUSR1 signal. This meant we would have to use some other method of informing the frontend that the backend was ready. In the interest in getting a working version as quickly as possible, we chose to go the most straightforward way possible and send a sentinel value of `"WAVESRV-ESTART"` directly over stderr. Since we were launching the backend as a subprocess, it was very easy to parse this and set the flag once it had been received. This would be improved down the line, but to get a proof of concept, it was sufficient.
+
+On the backend, it looked like
+
+```go
+fmt.Printf(os.Stderr, "WAVESRV-ESTART\n")
+```
+
+And on the frontend, it looked like
+
+```typescript
+rlStderr.on("line", (line) => {
+  if (line.includes("WAVESRV-ESTART")) {
+    waveSrvReadyResolve(true);
+    return;
+  }
+});
+```
+
+## Step 3: Solve the problems you don't know about that are critical for the launch
+
+At this point, all of the obvious bugs were fixed, but that didn't mean it was over. There were still a couple bugs that weren't apparent until running the app. This was overall the most painful part of the process&mdash;especially for bugs that involved communication between the frontend and backend since those weren't captured in logs at the time.
+
+This was particularly relevant for starting the backend from the Electron code. And it was the part of this step that took the longest to solve. And it meant the list of tasks to complete was expanded to cover:
+
+| critical for the initial launch | not critical for the initial launch |
+| ------------------------------- | ----------------------------------- |
+| cross plaform paths             | lock file                           |
+| signal that the backend started | PTY                                 |
+| ensure the backend starts       |                                     |
+
+### Ensuring the Backend Starts
+
+This was a simple change overall but it was hard to figure out what the causes were since the logs weren't helping a ton. To make a long story short, I did a lot of print statement debugging before realizing that the backend application never started running.
+
+So, I tried manually launching it myself to discover that I was unable to launch it either. It turns out that was because windows required the file to have a `.exe` extension to launch it. So, I added a simple change to the Taskfile:
+
+```diff
+build:server:
+    cmds:
+-       - go build -o dist/bin/wavesrv cmd/server/main-server.go
++       - go build -o dist/bin/wavesrv{{exeExt}} cmd/server/main-server.go
+    sources:
+        - "cmd/server/*.go"
+        - "pkg/**/*.go"
+    generates:
+-       - dist/bin/wavesrv
++       - dist/bin/wavesrv{{exeExt}}
+    deps:
+        - go:mod:tidy
+```
+
+Taskfiles are relatively flexible for this sort of thing, so it was straightforward to make the extension cross-platform.
+
+But solving that didn't fix the issue entirely&mdash;in fact&mdash;I created a new problem. Because the taskfile had been changed to add a `.exe` extension on Windows, the executable called by the frontend also had to be updated to include the `.exe` extension when run on Windows.
+
+It is also worth mentioning that I had some confusion around adding quotation marks around the path and whether or not an ampersand was necessary. The short answer is that it is not necessary when using `child_process.spawn` without the `"shell"` parameter being true. I ended up adding it at the time, but it was not necessary and ended up causing problems down the line. But if you decide to use something like `child_process.exec`, a shell is spawned, so you do have to be careful with this syntax.
+
+Once this was done, we had an app that would properly start. And with that, debugging became much simpler!
+
+## Step 5: Fix any easy problems that you commented out
+
+Of the issues that had been commented out, the lock file seemed to be a relatively easy fix. Essentially, our initial approach using `unix.Flock` wasn't cross platform, but there was a library that would solve the issue for us. By switching to "[github.com/alexflint/go-filemutex](http://github.com/alexflint/go-filemutex)", the same implementation worked on Windows as well.
+
+Unfortunately, this eventually (a few months later) caused issues when the lock files were on an NFS mount, so we did eventually go back to using `unix.Flock` for Mac and Linux while still using `go-filemutex` on Windows.
+
+## Step 6: Add back the hard problems that you commented out
+
+The remaining issue that had been commented out was the PTY, or pseudoterminal. And there unfortunately wasn't a good fix for it that was immediately apparent. We had previously been using the excellent "[https://github.com/creack/pty](https://github.com/creack/pty)" library, but it did not have windows support. There was an [open PR](https://github.com/creack/pty/pull/155) to add it, but I could not justify making the change at the time. After all, the branch was starting to diverge from the `main` branch, and this was going to require a couple more changes on our end.
+
+Rather than making a decision at that time, we decided to hold off and merge the currently existing changes. That meant that if we did decide to go forward with the windows build, we would be in a much better point to pick it up and go forward. So, I just undid the comments I added to the PTY handling and checked in those changes.
+
+## Step 7: Test your code on the original platform
+
+Of course, before merging the branch, we had to make sure that it didn't break anything on the original platform. I believe there may have been a couple small things I needed to resolve, but they were too small for me to remember all of the details of. That said, making sure to test it on the original system was absolutely critical.
+
+## Step 8: Merge the current changes
+
+With that, we were ready to merge the changes. We weren't quite to the cross platform Wave Terminal quite yet, but we were 90% of the way there.
+
+## Step 9: A Cross Platform PTY
+
+Perhaps a month later, it became apparent that the [PR](https://github.com/creack/pty/pull/155) for adding windows support to "[https://github.com/creack/pty](https://github.com/creack/pty)" was going to take a while. There were a couple bugs that still had to be worked out, but on further investigation, it would be possible to work around them. I decided to finally take a shot at integrating the PR into our code.
+
+### Targeting Forked Repos in Go
+
+This is another trick that could be an article in its own right, but it is worth bringing up here due to how critical it was. Essentially, Go Modules allow you to target a specific commit of a library using the `replace` directive. And it so happens that includes modules that are part of forked repositories.
+
+As mentioned before, the [PTY repo](https://github.com/creack/pty/pull/155) (created and maintained by [@creack](https://github.com/creack)) does not provide Windows support. But it does have an [open PR](https://github.com/creack/pty/pull/155) (created by [@photostorm](https://github.com/photostorm))that is very close to complete. Knowing this, it is possible to use the `replace` directive in the `go.mod` file to target a specific commit on photostorm's branch like so:
+
+```go
+module github.com/wavetermdev/waveterm
+
+go 1.22.4
+
+require (
+	< ... other dependencies ... >
+	github.com/creack/pty v1.1.21
+	< ... other dependencies ... >
+)
+
+replace github.com/creack/pty => github.com/photostorm/pty v1.1.19-0.20230903182454-31354506054b
+```
+
+Breaking this down, there is a regular import of the base repository in the `require` block. Then, at the bottom, the `replace` directive is used to replace the original `creack/pty` repository with a very specific commit in the `photostorm/pty` forked repository. And that's basically it.
+
+But I bet you're wondering where the `v1.1.19-0.20230903182454-31354506054b` number comes from. It's not the hardest to obtain, but it does take a little bit of work. First, go to the github page for the branch you want to point to and get the short hash for the commit you want. Then, you navigate to the directory where your `go.mod` file is located and type `go get` [`github.com/<path`](http://github.com/%3Cpath) `to repo>@<hash>`.
+
+In my case, the current value is `871f917`. Unfortunately, this does not work due to some compatibility issues that had been merged into the branch before being reverted in the original repo. If I were to try to use it, I would enter
+
+```bash
+go get github.com/photostorm/pty@871f917
+```
+
+which returns
+
+```bash
+go: github.com/photostorm/pty@871f917: github.com/photostorm/pty@v1.1.21-0.20240414153732-871f917c63a2: invalid version: go.mod has post-v1 module path "github.com/creack/pty/v2" at revision 871f917c63a2
+```
+
+which we don't want. So I had to use an earlier branch to get it to work. I ended up targeting the commit with hash `3135450`. Using that one, I enter
+
+```bash
+go get github.com/photostorm/pty@3135450
+```
+
+which gives the output
+
+```bash
+go: github.com/photostorm/pty@3135450 (v1.1.19-0.20230903182454-31354506054b) requires github.com/photostorm/pty@v1.1.19-0.20230903182454-31354506054b: parsing go.mod:
+        module declares its path as: github.com/creack/pty
+                but was required as: github.com/photostorm/pty
+```
+
+So, I can add `replace` [`github.com/creack/pty`](http://github.com/creack/pty) `=>` [`github.com/photostorm/pty`](http://github.com/photostorm/pty) `v1.1.19-0.20230903182454-31354506054b` to the bottom of my `go.mod` file. Then I run `go mod tidy` to make sure everything's working right, and now, I'm using the forked version of the library.
+
+### Breaking Changes?
+
+With that change, there were a couple small things that broke. For one, `os.File` is no longer the handle for `PTY` and `TTY` since windows does not work with those. Instead, Go interface for each `pty.Pty` and `pty.Tty` are provided. So I just need to change our internal types to match up with that to resolve the compiler errors.
+
+### Closing the PTY
+
+Of course, due to the bugs existing in this PR, that's not the entire story. But at the very least, it is possible to work around them for the time being. The most obvious one of these is that the app would crash on Windows when a widget was closed. This was because the branch I was using had a bug that when a PTY was closed twice, it would cause a segfault. I could have made a complicated wrapper around it using `sync.Once`, but in this case, it was much easier to simply find the second place the PTY was closed and to not call that case on Windows. It's not the most robust solution, but it gets the job done in the meantime.
+
+But with this fixed, we had a fully fledged terminal application that we could run on Mac, Linux, and Windows. We could open a PTY and close the widget that contained it without issue. But of course, there was still a little more to be done.
+
+## Step 10: Powershell
+
+Adding Powershell support was admittedly a bit of a strange feature. In a lot of ways, it's extremely straightforward, but once remote connections get involved, it becomes a bit strange. The full scope of the system for remote connections deserves its own article, so I won't go into too much detail there. Instead, I will focus on getting `wsh` to work with Powershell.
+
+Typically, the way we get `wsh` to work is by providing a shell script that runs the default scripts and then adds `wsh` to the path. for bash, this involves providing our own `.bashrc` that calls the original, and we can point to it via the `--rcfile` flag bash provides. For `zsh`, we have our own `.zprofile`, `.zshrc`, `.zlogin`, and `.zshenv` files that can be used by setting a `ZDOTDIR` environment variable. Powershell does similarly provide default files, but it cannot be configured. Instead, it checks and applies the configuration from several specific paths. I won't go into the full list, but you can find it [here](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_profiles?view=powershell-7.4).
+
+So instead of going that route, I decided to source a regular `*.ps1` file with `NoExit` instead. To do so, you can do something along the lines of `& "powershell.exe" -NoExit -File <path to .ps1 file>`. And since we trust our script, we can ensure it runs using something like `& "powershell.exe" -ExecutionPolicy Bypass -NoExit -File <path to *.ps1>`. Granted, we do need to determine the correct powershell executable (for instance `pwsh`) and want it to work cross-platform, so there is additional logic for that as well, although that is more relevant to remote connections than to Windows-specific changes. Either way, this successfully adds `wsh` to the `PATH` withing Wave, but leaves other terminal installations alone.
+
+## My Overall Thoughts
+
+Overall, I'd say the act of expanding the app to Windows was itself a resounding success. However, that does not mean it doesn't come without it's own issues. Most of the cross-platform problems we have had to deal with came up after it was implemented and typically revolved around testing the code before releases and dealing with platform-specific bugs. And that has meant that development has slowed down to handle these cases. It hasn't been a drastic slowdown, but it does add up when it needs to be considered for each release.
+
+So was it worth it? In one sense it absolutely was due to the increase in number of users. Averaging installs over the course of a couple months, I estimated we had about a 64% increase in downloads due to this feature. Which on the surface sounds great, but it is worth keeping in mind that this was a fairly static multiplier. It did not bring exponential growth to the app. And while not every feature needs to do that, it is something that should be weighed when developing an application. Is the growth that it brings worth the tradeoff of debugging and testing introduced in the future?
+
+In my personal opinion, I think it was worthwhile, but I can see arguments made against that. Perhaps it makes more sense to get a solid foundation on users on a limited set of platforms before expanding. After all, a lot of apps seem to be taking that approach these days. Of course, the downside to that approach is that the more developed the app is, the more difficult it will be to adapt down the line.
+
+I suppose a third approach could be taken where work is done behind the scenes to keep the application in line with a cross-platform app without actually making it cross platform. In that case, the debugging is put off entirely, and the app does not need to be tested on multiple platforms until the jump is made. But the pace of development will likely still be slowed down by this and there won't be much benefit to show for it.
+
+There is no one size fits all solution to this. Whether or not it makes sense to make an app cross-platform depends on your usecase and your userbase. But if you do decide to make your app cross platform, here are my takeaways:
+
+### Consider Your Base Technologies Carefully
+
+Since we had already been targeting cross-platform Unix and Mac support, the choices of Go, Typescript, and Electron left us in a good place. If any one of these technologies was not sufficiently cross-platform, it would have required a major rewrite to get Windows support to work. So if there is a chance you will make your application cross-platform, it is best to keep that in mind from the start. Even with that already considered, we still had a couple smaller dependencies to work out. But they were easy to switch out with alternatives since they were a smaller part of the application.
+
+### Balancing Earlier Cross-Platform Support and Later Cross-Platform Support
+
+For us, this change was done relatively early in the rewrite. To put a number on it, it was done one month and six days into the v0.8.0 rewrite. The later this choice had been made, the more changes would have been required. Making the change early on, even if it didn't have the PTY support, put us on a good path to making this possible, but it also meant that we had to deal with the overhead of the additional platform throughout more of the development process. If you really want to commit to a cross platform application, then starting to do so immedately has its benefits. But if you want to see how users approach the product before deciding that, you may be better off waiting until later.
+
+### Isolate Incompatibilities
+
+Gettings a minimal version on the app working on Windows was critical. The best first step to testing your code is ensuring that it compiles. The sooner you are able to do that, the sooner you will be able to use it to make the rest of the debugging easier. And the sooner you will be able to add back features that you had to temporarily strip away to get the initial code compiling.
+
+### Don't Force Yourself to do the Whole Thing at Once
+
+I will admit that I had a strong urge to tackle the entire project at once—including the PTY support. But I'm ultimately glad I didn't do that. I needed more time to evaluate that using the fork of the PTY library would be reasonable. And more than I would have liked could have changed in that time. For instance, switching `"path"` to `"path/filepath"` set a precedent for everyone else to do the same. If I had waited to merge, I likely would have had to go back and add more corrections. Making your application cross-platform can be a big project depending on how big it already is. And like most big problems, tackling it in smaller pieces tends to be a much more manageable way to handle it.
