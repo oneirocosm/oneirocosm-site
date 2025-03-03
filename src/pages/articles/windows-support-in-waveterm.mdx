@@ -209,15 +209,17 @@ go get github.com/photostorm/pty@3135450
 which gives the output
 
 ```
-go: github.com/photostorm/pty@3135450 (v1.1.19-0.20230903182454-31354506054b) requires github.com/photostorm/pty@v1.1.19-0.20230903182454-31354506054b: 
+go: github.com/photostorm/pty@3135450 (v1.1.19-0.20230903182454-31354506054b) requires github.com/photostorm/pty@v1.1.19-0.20230903182454-31354506054b:
 parsing go.mod: module declares its path as: github.com/creack/pty
 but was required as: github.com/photostorm/pty
 ```
 
-So, I can add 
+So, I can add
+
 ```
 replace github.com/creack/pty => github.com/photostorm/pty v1.1.19-0.20230903182454-31354506054b
 ```
+
 to the bottom of my `go.mod` file. Then I run `go mod tidy` to make sure everything's working right, and now, I'm using the forked version of the library.
 
 ### Breaking Changes?
