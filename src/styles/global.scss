@@ -29,6 +29,14 @@
     --dark-display: inline;
   }
 }
+html code {
+  color: #383a42;
+  background-color: #fafafa;
+}
+html.dark code {
+  color: #abb2bf;
+  background-color: #282c34;
+}
 html.light .astro-code,
 html.light .astro-code span {
   color: var(--shiki-light) !important;
@@ -154,7 +162,7 @@ img {
 code {
   padding: 2px 5px;
   background-color: rgb(var(--gray-light));
-  border-radius: 2px;
+  border-radius: 6px;
 }
 pre {
   padding: 1.5em;
