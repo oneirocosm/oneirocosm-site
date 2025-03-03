@@ -21,12 +21,18 @@
   --color-text: rgb(0, 0, 0);
   --light-display: inline;
   --dark-display: none;
+  --table-header: #DDD;
+  --table-row-1: #CCC;
+  --table-row-2: #BCBCBC;
 
   &.dark {
     --color-sitebg: rgb(55, 65, 81);
     --color-text: rgb(209, 213, 219);
     --light-display: none;
     --dark-display: inline;
+    --table-header: #333;
+    --table-row-1: #444;
+    --table-row-2: #4a4a4a;
   }
 }
 html code {
@@ -155,6 +161,28 @@ input {
 }
 table {
   width: 100%;
+  border-spacing: 0;
+  border-collapse: separate;
+  margin-bottom: 1rem;
+  th {
+    padding: 4px 13px;
+    background-color: var(--table-header);
+    border-bottom: 1px solid black;
+  }
+  td {
+    padding: 4px 13px;
+  }
+  tr {
+    background-color: var(--table-row-1);
+  }
+  tr:nth-child(even){
+    background-color: var(--table-row-2);
+  }
+  tr:first-child th:first-child { border-top-left-radius: 6px; }
+  tr:first-child th:last-child { border-top-right-radius: 6px; }
+
+  tr:last-child td:first-child { border-bottom-left-radius: 6px; }
+  tr:last-child td:last-child { border-bottom-right-radius: 6px; }
 }
 img {
   border-radius: 8px;
