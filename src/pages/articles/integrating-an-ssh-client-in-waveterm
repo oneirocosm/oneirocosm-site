@@ -1,0 +1,536 @@
+---
+title: "Integrating an SSH Client in Waveterm"
+layout: "../../layouts/MainLayout.astro"
+description: "A retrospective on writing an SSH Client in Go"
+---
+
+Remote connections have become increasingly important in computing in the last few years. On a machine that isn't very powerful, the ability to access the resources available to a different machine opens up a whole new world of possibilities. Adding the concept of isolated containers to ensure things are reproducible, and you have another whole set of use cases. Not to mention the challenges of proprietary hardware that is difficult to transport&mdash;by SSHing into a computer, a lot those issue disappear. Or perhaps you simply need to access files that are on your desktop when you are away from the office. Needless to say, remote connections via SSH open up so many more possibilities than they did years ago. So why has our interface to access them changed so little?
+
+## Why Attempt This?
+
+A big reason is that it's simply a difficult problem to solve. But there's a lot of potential there. And because of that, one of the main goals we had when designing Waveterm was making remote connections feel like local connections in as many cases as we could. This could open up the door to editing remote files with the exact same tools you would for local ones. Or even previewing remote files using the exact same interface you would use to view local ones. This is difficult to solve for an arbirary application, but if you limit yourself to a single application, things suddenly become a lot more feasible.
+
+## The Old Design
+
+Prior to me joining the team, Waveterm already had a very simple `ssh` design that would just use golang's `os/exec` library to start `ssh` calls via the regular command line interface. Furthermore, it relied on stdin/stdout as a way to transfer data to and from the remote connection. This was bug-prone for a couple different reasons:
+
+1. the `ssh` command is not bundled with the application and could potentially have different behavior on different systems
+1. with some shells like `zsh`, `oh my zsh` can prompt for updates which blocks stdin/stdout which can cause issues when those are being used to transmit data to and from the remote connection.
+1. sometimes, startup scripts can cause unexpected output to stdin/stdout which can cause issues when those are being used to transmit data to and from the remote connection
+
+Furthermore, there were some other limitations of the system. It made the assumption that an ssh login would require either no authentication, one password, one ssh key, or one ssh key with a passphrase. While this covers the vast majority of cases, it is very possible to set up SSH to require multiple SSH keys or even a combination of keyboard interactive authentication along with any number of SSH keys. And it would be nice to be able to support those as well.
+
+All things considered, this design worked well most of the time, but it was becoming clear that we could improve it vastly by integrating with `ssh` directly.
+
+## A New Design
+
+Enter Golang's SSH `crypto/ssh` library. This directly made calls to SSH, so we would no longer be depending on the system's `ssh` library. Which is a pretty big win right off the bat. And by issuing commands rather than `ssh` sessions, we wouldn't have to worry about extraneous output being dumped to stdout. Add in the fact that Go is very good at cross-compiling to different operating systems, and there's a lot to be excited about.
+
+So, I got to work making a minimal prototype of what a new system would look like. The golang `crypto/ssh` library offers several different forms of authentication, and each of them can be used as many times as the SSH server requests. A complete list of authentication methods can be found [here](https://www.baeldung.com/linux/ssh-authentication-methods), but in my opinion, the most important to support are *KbdInteractiveAuthentication*, *PasswordAuthentication*, and *PubkeyAuthentication*.
+
+### A Discussion of Authentication Methods
+
+Still, given how prevalent these are in SSH, it is worthwhile to go into each of these in detail and discuss why the methods above were selected:
+
+#### PubkeyAuthentication Discussion
+PubkeyAuthentication is more or less what I would consider the standard to be for SSH authentication methods. The actual details of how this works are a bit complex, and if you'd like more information it, [this post](https://www.digitalocean.com/community/tutorials/understandithe-ssh-encryption-and-connection-process) explains the process in detail. But to simplify the process greatly, you need to generate a public and private key pair on your client machine and then provide the public key to the remote server (often kept in the `~/.ssh/authorized_keys` file). Then when connecting, your ssh client should be able to use your local private key to connect to the ssh server that has your public key. The acutal details of how the connection is formed depend on the algorithm the ssh key pair uses, but the actual is the same regardless of the chose algorithm.
+
+Additionally, it is possible to further encrypt your keys by requiring a passphrase to encrypt to private key. While this adds an additional layer of security, it makes integrating with the `crypto/ssh` library more difficult which will become important later. That said, given how prevalent this method of authentication is, it is critical to include in any ssh application.
+
+#### PasswordAuthentication Discussion
+PasswordAuthentication is pretty much what it sounds like on the tin. With this type of authentication, you simply need to type in the password of the remote user to login. There are some additional details around the encryption of the password layer, but the finer points of it are obfuscated by the `crypto/ssh` library. If you do want to read up on it, some details are provided in [RFC-4252](https://datatracker.ietf.org/doc/html/rfc4252#section-8).
+
+While it is not the most secure method of ssh authentication, it is still commonly used. So it made a lot of sense to include early on in the development of the ssh client.
+
+#### KbdInteractiveAuthentication Discussion
+KbdInteractiveAuthentication is admittedly a bit of a confusing one to explain. At first glance, it looks an awful lot like PasswordAuthentication, and in fact, its default behavior more-or-less mirrors it exactly. But in practice, KbdInteractiveAuthentication is much more expansive and provides a ton of customization options on the server side. It can be setup with something like bsdauth or PAM, and as a result, can hook into other services like google authenticator. The exact details aren't the most important to provide, but you can find info on them in [RFC-4256](https://datatracker.ietf.org/doc/html/rfc4256).
+
+A lot of the features used in KbdInteractiveAuthentication aren't critical to a first pass at an SSH client. That said, it is very common for KbdInteractiveAuthentication to be confused with PasswordAuthentication. Furthermore, it isn't a large jump from PasswordAuthentication to implement, so it was still reasonable to add early on.
+
+
+#### GSSAPIAuthentication Discussion
+I will be fully upfront that I do not actually know a lot about GSSAPI Authentication. In all of my time using SSH, I've never personally had to use it. That said, there are a few details I can provide. To start, the GSS in GSSAPI stands for Generic Security Service. It serves as a common interface for various authentication providers to plug into&mdash;most notably kerberos. It itself can be split into two defferent methods: `gssapi-with-mic` and `gssapi-keyex`.
+
+Beyond this, things get a lot more complicated and open up the door to a ton of configuration options. So while `crypto/ssh` does support this method of authentication, I decided the cost of implementation was too great at the time.
+
+#### HostbasedAuthentication Discussion
+HostbasedAuthentication is a rather simple form of authentication, but it is considered less secure than the other types. Essentially, if the **client's** public key is in one of the **server's** knownhosts files, the connection is allowed to go through. While simple, a lot of people have concerns about the security, so it is disabled on ssh client's by default. That alone would be a reason for it to be delayed, but the real reason I chose not to include it was that it simply was not supported by Golang's `crypto/ssh` library. There is currently [a proposal](https://github.com/golang/go/issues/68772) to add it, but it has not yet been added at the time of writing.
+
+#### ChallengeResponseAuthentication, RhostsAuthentication, and KerberosAuthentication Discussion
+It's a bit difficult for me to obtain accurate information on these, but I believe they were authentication methods in SSH v1 that have been replaced in SSH v2. To be clear, this happened back in 2006. While these tended to be somewhat backwards compatible back then, as far as I have been able to tell, in the nearly 2 decades since, that backwards compatibility has been dropped. Essentially, ChallengeResponseAuthentication was replaced by KbdInteractiveAuthentication. RhostsAuthentication was replaced by HostbasedAuthentication. And KerberosAuthentication was replaced by GSSAPIAuthentication.
+
+As these no longer need to be supported by OpenSSH, there is no real reason to support them in a new application. And even if that request were to be supported, it would likely be difficult to accomplish and would have a very low priority.
+
+### Implementations of Authentication Methods
+
+With PubkeyAuthentication, PasswordAuthentication, and KbdInteractiveAuthentication selected, it then made sense to implement each of these in turn. These implementations aren't exactly what I wrote at the time, since I think some of that code was due to other aspects of the system, and including those parts would obfuscate the pieces that made up the core of the SSH client.
+
+But before I get to each implementation, it is worth mentioning the common interface that they share. The `crypto/ssh` library provides an interface called an `AuthMethod`:
+
+```go
+type AuthMethod interface {
+    // auth authenticates user over transport t.
+    // Returns true if authentication is successful.
+    // If authentication is not successful, a []string of alternative
+    // method names is returned. If the slice is nil, it will be ignored
+    // and the previous set of possible methods will be reused.
+    auth(session []byte, user string, p packetConn, rand io.Reader, extensions map[string][]byte) (authResult, []string, error)
+
+    // method returns the RFC 4252 method name.
+    method() string
+}
+```
+
+I did not need to implement these myself since the library provided helper methods for each type of authentication (as well as one for retryable authentication). It is also important to keep in mind that both this API and my implementation of the SSH client were written before generators were stabilized in Go. While I haven't attempted a rewrite since this, I am curious how that feature would change this implementation.
+
+#### PubkeyAuthentication Implementation
+For PubkeyAuthentication, `crypto/ssh` provides the `PublicKeysCallback` function in order to create an appropriate `AuthMehtod`:
+
+```go
+// PublicKeysCallback returns an AuthMethod that runs the given
+// function to obtain a list of key pairs.
+func ssh.PublicKeysCallback(getSigners func() (signers []ssh.Signer, err error)) ssh.AuthMethod
+```
+
+This more or less required me to create my own function to produce a list of signers. A naive implementation of this could look like:
+
+```go
+func createPublicKeyCallback(identityFiles []string) func() ([]ssh.Signer, error) {
+	return func() (outSigner []ssh.Signer, outErr error) {
+		for _, identityFile := range identityFiles {
+			filePath, err := wavebase.ExpandHomeDir(identityFile)
+			if err != nil {
+				continue
+			}
+			privateKey, err := os.ReadFile(filePath)
+			if err != nil {
+				continue
+			}
+			signer, err := ssh.ParsePrivateKey(privateKey)
+			if err != nil {
+				continue
+			}
+			outSigner = append(outSigner, signer)
+		}
+		return outSigner, nil
+	}
+}
+```
+
+It takes a list of identity file names as input. Then it reads each to obtain a private key which is parsed into a signer. Finally all signers are returned. It is a relatively simple system, but it does have a flaw with it. It cannot handle SSH keys that have been encrypted with a passphrase. If a key with a passphrase is put through `ssh.ParsePrivateKey`, it returns a `ssh.PassphraseMissingError` error. Fortunately, ssh provides the `ParsePrivateKeyWithPassphrase` method to get around this issue. If we combine that with some function named `GetUserInputSshPassprase`, we should be able to arrive at something that can handle it. I won't go into how that function is implemented since it's outside the scope of the article, but it essentially pops up a dialog box to allow a user to enter a passphrase. With these changes, the code becomes:
+
+```go
+func createPublicKeyCallback(identityFiles []string) func() ([]ssh.Signer, error) {
+	return func() (outSigner []ssh.Signer, outErr error) {
+		for _, identityFile := range identityFiles {
+			filePath, err := wavebase.ExpandHomeDir(identityFile)
+			if err != nil {
+				continue
+			}
+			privateKey, err := os.ReadFile(filePath)
+			if err != nil {
+				// skip this key and try with the next
+				continue
+			}
+			signer, err := ssh.ParsePrivateKey(privateKey)
+			if err == nil {
+				outSigner = append(outSigner, signer)
+				continue
+			} else if _, ok := err.(*ssh.PassphraseMissingError); !ok {
+				continue
+			}
+			userProvidedPassphrase := GetUserInputSshPassphrase()
+			signer, err = ssh.ParsePrivateKeyWithPassphrase(privateKey, []byte(userProvidedPassphrase))
+			if err != nil {
+				continue
+			}
+			outSigner = append(outSigner, signer)
+		}
+		return outSigner, nil
+	}
+}
+```
+
+This can technically handle SSH keys that are encrypted with a passphrase, but it has a major problem. It must loop through all of the public keys before the array of signers is sent. This means all encrypted SSH keys must have a password entered before any connection attempt is actually made which is unacceptable in terms of user-friendlieness. A solution for this will be presented later since it is complex enough to warrant its own section. But until then, this can be used as a basic prototype.
+
+#### PasswordAuthentication Implementation
+For PasswordAuthentication, `crypto/ssh` provides the `PasswordCallback` function in order to create an appropriate `AuthMehtod`:
+
+```go
+// PasswordCallback returns an AuthMethod that uses a callback for
+// fetching a password.
+func PasswordCallback(prompt func() (secret string, err error)) AuthMethod
+```
+
+Luckily, this one is significantly simpler to implement once the method of user input has been determined. As before, the implementation used to obtain user input is outside the scope of this article, but we can assume the existence of some `GetUserInputPassword` function that prompts the user for a password and returns it once it has been typed in. With that in mind, we can implement the `prompt` function used as an input to `PasswordCallback` as:
+
+```go
+func createInteractivePasswordCallbackPrompt() func() (secret string, err error) {
+	return func() (secret string, outErr error) {
+		response := GetUserInputSshPassword()
+		return response, nil
+	}
+}
+```
+
+Admittedly, this feels a bit lackluster. This is partially because it's a simple system, but some of the simplicity has been introduced to explain the basic principle. In truth, the `GetUserInputPassword` is a little more complicated than I suggested. Really, we should assume it takes the form of:
+
+```go
+func GetUserInputSshPassword(ctx context.Context, connName string) (string, error)
+```
+
+This gives us a few additional features. A context `ctx` can be used to cancel the user input if the connection attempt is failed for some external reason. A string `connName` is used to inform the user what `user@host` name they are actually connecting to. And lastly, an error can be returned in case the user input fails for some reason&mdash;for instance, if the user decides to cancel the password input. With this in mind, we can update this to:
+
+```go
+func createInteractivePasswordCallbackPrompt2(connCtx context.Context, remoteDisplayName string) func() (secret string, err error) {
+	return func() (secret string, outErr error) {
+		return GetUserInputSshPassword(connCtx, remoteDisplayName)
+	}
+}
+```
+
+Which in some ways is simpler, but it does expand the user input system significantly.
+
+
+#### KbdInteractiveAuthentication Implementation
+For KbdInteractiveAuthentication, `crypto/ssh` provides the `KeyboardInteractive` function in order to create an appropriate `AuthMehtod`:
+
+```go
+// KeyboardInteractive returns an AuthMethod using a prompt/response
+// sequence controlled by the server.
+func KeyboardInteractive(challenge KeyboardInteractiveChallenge) AuthMethod
+```
+
+This isn't actually super helpful without the definition of `KeyboardInteractiveChallenge`. That is given by:
+
+```go
+// KeyboardInteractiveChallenge should print questions, optionally
+// disabling echoing (e.g. for passwords), and return all the answers.
+// Challenge may be called multiple times in a single session. After
+// successful authentication, the server may send a challenge with no
+// questions, for which the name and instruction messages should be
+// printed.  RFC 4256 section 3.3 details how the UI should behave for
+// both CLI and GUI environments.
+type KeyboardInteractiveChallenge func(name, instruction string, questions []string, echos []bool) (answers []string, err error)
+```
+
+As with the password case, we need to write some code to implement this callback function. In this case, we will assume the existence of a user input function which will be called `UserInputChallengeResponse`. We will assume it takes the form
+
+```go
+func UserInputChallengeResponse(ctx context.Context, question string, echo bool, remoteName string) (answer string, err error)
+```
+
+As before, `ctx` is used to allow the user input to be cancelled if the connection is cancelled and remoteName is used to inform the user which `user@host` connection they are actually connecting to. With this, we can create the callback using:
+
+```go
+func createInteractiveKbdInteractiveChallenge(connCtx context.Context, remoteName string) func(name, instruction string, questions []string, echos []bool) (answers []string, err error) {
+	return func(name, instruction string, questions []string, echos []bool) (answers []string, outErr error) {
+		if len(questions) != len(echos) {
+			return nil, fmt.Errorf("bad response from server: questions has len %d, echos has len %d", len(questions), len(echos))
+		}
+		for i, question := range questions {
+			echo := echos[i]
+			answer, err := UserInputChallengeResponse(connCtx, question, echo, remoteName)
+			if err != nil {
+				return nil, err
+			}
+			answers = append(answers, answer)
+		}
+		return answers, nil
+	}
+}
+```
+
+There isn't too much new here aside from the fact that there are multiple questions and responses. Additionally, this introduces an `echos` parameter which is an array of booleans&mdash;one associated with each question. If true, the user's typed response will be echoed back to them, but if not (e.g. for a password), the typed response is hidden. The actual use of that is the responsibility of `UserInputChallengeResponse`, so all that this needs to handle is making sure it is forwarded to that function. Additionally, an extra check is done to assert the number of questions is the same as the number of echo booleans.
+
+### The HostKeyCallback
+In addition to authentication methods, used to protect the server from the client, SSH also has a mechanism to protect the client from the server. More accurately, it is designed to protect the client from a man-in-the-middle attack where an attacker places themself between the client and intended SSH server. To do this, the client keeps track of all public SSH keys associated with the remote SSH servers it has connected to. When a connection is made, if this public key is known to the client, the connection goes through. If no key is known for the server, the user is prompted for the key. And if the key doesn't match, the user needs to resolve the inconsistency in order to connect. The `crypto/ssh` library provides a `HostKeyCallback` type to handle this, and the `crypto/ssh/knownhosts` library adds some convenience functions to make the process easier:
+
+```go
+// HostKeyCallback is the function type used for verifying server
+// keys.  A HostKeyCallback must return nil if the host key is OK, or
+// an error to reject it. It receives the hostname as passed to Dial
+// or NewClientConn. The remote address is the RemoteAddr of the
+// net.Conn underlying the SSH connection.
+type HostKeyCallback func(hostname string, remote net.Addr, key PublicKey) error
+```
+To keep track of the host keys, OpenSSH typically stores them in `~/.ssh/known_hosts`, `~/.ssh/known_hosts2`, `/etc/ssh/ssh_known_hosts`, or `/etc/ssh/ssh_known_hosts2`. These can be configured for other locations, but for now, we will just assume whatever is selected will be configured into a list named `knownHostsFiles` where the home directories are properly expanded. We also need a couple functions for displaying messages and gathering input from the user. For adding to a known_hosts file, we have `PromptUserKnownHostsMissing`. For informing the user of a mismatch, we have `PromptUserKnownHostsChange`. With these, a first pass at a known hosts system could be reduced to:
+
+```go
+func createHostKeyCallback2(ctx context.Context, knownHostsFiles []string) (ssh.HostKeyCallback, error) {
+
+	basicCallback, err := knownhosts.New(knownHostsFiles...)
+	if err != nil {
+		return nil, err
+	}
+
+	waveHostKeyCallback := func(hostname string, remote net.Addr, key ssh.PublicKey) (outErr error) {
+		err := basicCallback(hostname, remote, key)
+		if err == nil {
+			// success
+			return nil
+		} else if _, ok := err.(*knownhosts.KeyError); !ok {
+			// this covers any error that is not a KeyError
+			return err
+		}
+		serr, _ := err.(*knownhosts.KeyError)
+		if len(serr.Want) == 0 {
+			// the key was not found
+
+			err := fmt.Errorf("placeholder, should not be returned") // a null value here can cause problems with empty knownHostFiles slice
+			for _, filename := range knownHostsFiles {
+				newLine := knownhosts.Line([]string{knownhosts.Normalize(hostname)}, key)
+				err = PromptUserKnownHostsMissing(ctx, filename, newLine, hostname, key)
+				if err == nil {
+					break
+				}
+				if serr, ok := err.(UserInputCancelError); ok {
+					return serr
+				}
+			}
+
+			if err != nil {
+				return fmt.Errorf("unable to create new knownhost key: %e", err)
+			}
+		} else {
+			// the key changed
+			correctKeyFingerprint := base64.StdEncoding.EncodeToString(key.Marshal())
+			var offendingKeysFingerprints []string
+			for _, badKey := range serr.Want {
+				formattedKey := base64.StdEncoding.EncodeToString(badKey.Key.Marshal())
+				offendingKeysFingerprints = append(offendingKeysFingerprints, formattedKey)
+			}
+			return PromptUserKnownHostsChange(ctx, correctKeyFingerprint, knownHostsFiles, offendingKeysFingerprints)
+		}
+
+		updatedCallback, err := knownhosts.New(knownHostsFiles...)
+		if err != nil {
+			return err
+		}
+		// try one final time
+		return updatedCallback(hostname, remote, key)
+	}
+
+	return waveHostKeyCallback, nil
+}
+```
+
+There are a couple things that need to be improved about this design, but it's worth explaining how it works first. To start, the `knownhosts.New` function is used to obtain a `HostKeyCallback` that walks the provided known_hosts files and compares them to the provided key. In truth, we could use this callback as is, but there are a lot of improvements we can make by wrapping it. To wrap it, we create the `waveHostKeyCallback` function. This function starts by calling the `basicCallback` and looking at the output. If the key returns an error that is anything other than a `KeyError`, it simply returns the error. But in the case of a `KeyError` there are two possible things that can happen.
+
+#### A Missing KnownHosts Key
+
+After casting to a `KeyError`, if `serr.Want` is an empty array, that means the key was never found in one of the known_hosts files. In this case, we need to use the `PromptUserKnownHostsMissing` function to check if the user wants to add the key and then add it if they do. Typically, I don't go into the implementation of the user prompt functions, but I'm going to make a slight exception here. It is worth talking about the process used to convert an `ssh.PublicKey` into something human readable. Looking at the way the `crypto/ssh/knownhosts` file writes new lines, my suggestion for this is
+
+```go
+base64Key := base64.StdEncoding.EncodeToString(key.Marshal())
+```
+
+This could be different if a different format is being used for the key in your file, but it is the default to the best of my knowledge.
+
+With that sorted, we do need to select the correct file to add the new key to. I do not know if there's a standard way to handle this, but my process was to loop over the known_hosts files and attempt to write to each until successful. If none of them are successful (including the case where the `knownHostsFiles` array is empty), an error is returned explaining that. Then, now that the file has been modified, the `basicCallback` is recreated and tried one last time.
+
+#### A Modified KnownHosts Key
+After casting to a `KeyError`, if `serr.Want` is a non-empty array, that means the is a discrepancy between the provided key and the one (or ones) stored in the known_hosts files. In this case, we need to use the `PromptUserKnownHostsChange` function to inform the user that they must manually change their known_hosts file to fix the discrepancy. Technically it might be possible to automate that process similar to the way a missing key is added, but since OpenSSH doesn't do that, we don't need to as well (although it coud be a nice feature).
+
+As with the Missing Key case, I recommend the base64 encoding for printing out the key in a human readable format. But unlike that case, this one should return as soon as the message is displayed. There is no point in re-attempting the connection until the user manually modifies the known_hosts files.
+
+#### Fixing Some KnownHosts Issues
+As mentioned before, this implementation for altering the known hosts files has a couple issues. The biggest issue is that if any one of the provided known_hosts files fails for any reason (does not exist, incorrect permissions, incorrect formatting), the entire process fails. To me, this was an unacceptable bug and needed to be fixed before this system was ready to use. With that in mind, I made the following changes to generating the `HostKeyCallback`:
+
+```go
+func createHostKeyCallback(ctx context.Context, knownHostsFiles []string) (ssh.HostKeyCallback, error) {
+	// the library we use isn't very forgiving about files that are formatted
+	// incorrectly. if a problem file is found, it is removed from our list
+	// and we try again
+	var basicCallback ssh.HostKeyCallback
+	var unreadableFiles []string
+	for basicCallback == nil && len(knownHostsFiles) > 0 {
+		var err error
+		basicCallback, err = knownhosts.New(knownHostsFiles...)
+		if serr, ok := err.(*os.PathError); ok {
+			badFile := serr.Path
+			unreadableFiles = append(unreadableFiles, badFile)
+			var okFiles []string
+			for _, filename := range knownHostsFiles {
+				if filename != badFile {
+					okFiles = append(okFiles, filename)
+				}
+			}
+			if len(okFiles) >= len(knownHostsFiles) {
+				return nil, fmt.Errorf("problem file (%s) doesn't exist. this should not be possible", badFile)
+			}
+			knownHostsFiles = okFiles
+		} else if err != nil {
+			// TODO handle obscure problems if possible
+			return nil, fmt.Errorf("known_hosts formatting error: %+v", err)
+		}
+	}
+
+	if basicCallback == nil {
+		basicCallback = func(hostname string, remote net.Addr, key ssh.PublicKey) error {
+			return &knownhosts.KeyError{}
+		}
+	}
+
+	waveHostKeyCallback := func(hostname string, remote net.Addr, key ssh.PublicKey) (outErr error) {
+		err := basicCallback(hostname, remote, key)
+		if err == nil {
+			// success
+			return nil
+		} else if _, ok := err.(*knownhosts.RevokedError); ok {
+			// revoked credentials are refused outright
+			return err
+		} else if _, ok := err.(*knownhosts.KeyError); !ok {
+			// this covers any error that is not a KeyError
+			return err
+		}
+		serr, _ := err.(*knownhosts.KeyError)
+		if len(serr.Want) == 0 {
+			// the key was not found
+
+			err := fmt.Errorf("placeholder, should not be returned") // a null value here can cause problems with empty knownHostFiles slice
+			// try to write to a file that could be read
+			for _, filename := range knownHostsFiles {
+				newLine := knownhosts.Line([]string{knownhosts.Normalize(hostname)}, key)
+				err = PromptUserKnownHostsMissing(ctx, filename, newLine, hostname, key)
+				if err == nil {
+					break
+				}
+				if serr, ok := err.(UserInputCancelError); ok {
+					return serr
+				}
+			}
+			// try to write to a file that could not be read (file likely doesn't exist)
+			// should catch cases where there is no known_hosts file
+			if err != nil {
+				for _, filename := range unreadableFiles {
+					newLine := knownhosts.Line([]string{knownhosts.Normalize(hostname)}, key)
+					getUserVerification := createMissingKnownHostsVerifier(filename, hostname, remote.String(), key)
+					err = writeToKnownHosts(filename, newLine, getUserVerification)
+					if err == nil {
+						knownHostsFiles = []string{filename}
+						break
+					}
+					if serr, ok := err.(UserInputCancelError); ok {
+						return serr
+					}
+				}
+			}
+
+			if err != nil {
+				return fmt.Errorf("unable to create new knownhost key: %e", err)
+			}
+		} else {
+			// the key changed
+			correctKeyFingerprint := base64.StdEncoding.EncodeToString(key.Marshal())
+			var offendingKeysFingerprints []string
+			for _, badKey := range serr.Want {
+				formattedKey := base64.StdEncoding.EncodeToString(badKey.Key.Marshal())
+				offendingKeysFingerprints = append(offendingKeysFingerprints, formattedKey)
+			}
+			return PromptUserKnownHostsChange(ctx, correctKeyFingerprint, knownHostsFiles, offendingKeysFingerprints)
+		}
+
+		updatedCallback, err := knownhosts.New(knownHostsFiles...)
+		if err != nil {
+			return err
+		}
+		// try one final time
+		return updatedCallback(hostname, remote, key)
+	}
+
+	return waveHostKeyCallback, nil
+}
+```
+
+This makes two very important changes. The first is done so an `os.PathError` doesn't result in a failure. And the second is done so any appended key prefers files that did not have an `os.PathError`. For the first, the code now is:
+
+```go
+var basicCallback ssh.HostKeyCallback
+var unreadableFiles []string
+for basicCallback == nil && len(knownHostsFiles) > 0 {
+	var err error
+	basicCallback, err = knownhosts.New(knownHostsFiles...)
+	if serr, ok := err.(*os.PathError); ok {
+		badFile := serr.Path
+		unreadableFiles = append(unreadableFiles, badFile)
+		var okFiles []string
+		for _, filename := range knownHostsFiles {
+			if filename != badFile {
+				okFiles = append(okFiles, filename)
+			}
+		}
+		if len(okFiles) >= len(knownHostsFiles) {
+			return nil, fmt.Errorf("problem file (%s) doesn't exist. this should not be possible", badFile)
+		}
+		knownHostsFiles = okFiles
+	} else if err != nil {
+		// TODO handle obscure problems if possible
+		return nil, fmt.Errorf("known_hosts formatting error: %+v", err)
+	}
+}
+
+if basicCallback == nil {
+	basicCallback = func(hostname string, remote net.Addr, key ssh.PublicKey) error {
+		return &knownhosts.KeyError{}
+	}
+}
+```
+
+This is a little convoluted, but the idea is that we attempt to create a callback with all of the provided `knownHostsFiles` Then, if an `os.PathError` is raised at any point in the process, the error is parsed to determine the problem file. The `knownHostsFiles` list is recreated without the problem file, and the problem file is added to the `unreadableFiles` list.
+
+Note that the loop will exit as soon as the `knowshosts.New` function successfully returns a `basicCallback` or if the `knownHostsFiles` list is empty. The first of these is somewhat obvious since it means the callback is ready to be used and the function can continue. But the empty `knownHostsFiles` case is slightly less clear. The first reason that needs to be done is that if the `knownHostsFiles` list is empty, the `knownhosts.New` function will fail forever (or even crash the program if the createHostKeyCallback is called with a `nil` argument for `knownHostsFiles`). By providing the empty `knownHostsFiles` case, the program will know that it needs to exit the loop.
+
+Once the program has exited the loop, we require one last check to see if `basicCallback` is `nil`. Then, if it is, we set it to a very simple callback that returns a `knownhosts.KeyError`. This may seem a bit strange at first&mdash;why not just return an error then and there and be done with it? Why bother using a callback? Well, it turns out that if this case is hit, the most likely cause of it is that none of the files in `knownHostsFiles` actually exist. And in this case, it is ideal to treat it as the regular case where no key has been found&mdash;in other words, the `knownhosts.KeyError`. This does require us to attempt to create the file if it doesn't already exist, but we will get to that later.
+
+The second important change is the separate handling of known hosts files that already exist and those that don't. This is handled in the code below:
+
+```go
+err := fmt.Errorf("placeholder, should not be returned") // a null value here can cause problems with empty knownHostFiles slice
+// try to write to a file that could be read
+for _, filename := range knownHostsFiles {
+	newLine := knownhosts.Line([]string{knownhosts.Normalize(hostname)}, key)
+	err = PromptUserKnownHostsMissing(ctx, filename, newLine, hostname, key)
+	if err == nil {
+		break
+	}
+	if serr, ok := err.(UserInputCancelError); ok {
+		return serr
+	}
+}
+// try to write to a file that could not be read (file likely doesn't exist)
+// should catch cases where there is no known_hosts file
+if err != nil {
+	for _, filename := range unreadableFiles {
+		newLine := knownhosts.Line([]string{knownhosts.Normalize(hostname)}, key)
+	    err = PromptUserKnownHostsMissing(ctx, filename, newLine, hostname, key)
+		if err == nil {
+			knownHostsFiles = []string{filename}
+			break
+		}
+		if serr, ok := err.(UserInputCancelError); ok {
+			return serr
+		}
+	}
+}
+
+if err != nil {
+	return fmt.Errorf("unable to create new knownhost key: %e", err)
+}
+```
+
+The main key takeaway here, is that if a file already exists, it is preferred to attempt to write to that file first. However, if all of those writes fail, we still need a fallback case to write to the files that don't already exist. In this particular version of the code, it is assumed that `PromptUserKnownHostsMissing` will automatically try to create the file if it doesn't exist; however, it would be possible to make that a separate operation if desired.
+
+The one strange corner case that occurs here is the case when the `knownHostsFiles` and `unreadableFiles` arrays are both empty. In this case, we want to exit with an error, so a dummy error is provided up-front to be overwritten by the functions within the for loops. If both loops are skipped, the error cannot be set to nil, and the callback will exit with an error as expected.
+
+With this, the `createHostKeyCallback` function is in a reasonable place to handle most common errors that will be thrown its way. There are a few additional improvements to be made down the line, but this is far enough to go to get a working prototype together.
+
+### Combining It Together
+
+With the Authentication Methods and HostKey Callback complete, it is possible to throw everything together and test it out. To start, this will be implemented in a single function as an introduction. Eventually it will make sense to separate this out in a refactor, but there are a few more important changes to start.
+
+As a first pass, the system can be implemented as follows:
+
+```
+
+```
