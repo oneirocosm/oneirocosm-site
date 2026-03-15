@@ -39,6 +39,12 @@ const url = Astro.url.pathname;
                   : "navbar__item"}>Articles</a
               >
               <a
+                href="/photos/"
+                class={url === "/articles/"
+                  ? "navbar__item--current"
+                  : "navbar__item"}>Photos</a
+              >
+              <a
                 href="/about/"
                 class={url === "/about/"
                   ? "navbar__item--current"
@@ -80,6 +86,9 @@ const url = Astro.url.pathname;
             </li>
             <li class="mobile-menu__line">
               <a href="/articles/" class="mobile-menu__item">Articles</a>
+            </li>
+            <li class="mobile-menu__line">
+              <a href="/photos/" class="mobile-menu__item">Photos</a>
             </li>
             <li class="mobile-menu__line">
               <a href="/about/" class="mobile-menu__item">About Me</a>
