@@ -1,0 +1,8 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/photos/pumpkin-carving/*.{jpeg,jpg,png,gif}');
+---
+
+<MainLayout categorySelected="">
+
+</MainLayout>
