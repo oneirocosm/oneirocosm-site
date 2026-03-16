@@ -27,6 +27,10 @@
     background-color: transparent;
     border: none;
     color: inherit;
+    display: grid;
+    > * {
+      grid-area: 1/1;
+    }
 
     &:hover {
       color: var(--accent);
@@ -35,13 +39,17 @@
     .theme-icon--light {
       width: 20px;
       height: 20px;
-      display: var(--light-display);
+      opacity: var(--light-display);
+      z-index: var(--light-display);
+      transition: opacity 1.5s ease-in-out;
     }
 
     .theme-icon--dark {
       width: 20px;
       height: 20px;
-      display: var(--dark-display);
+      opacity: var(--dark-display);
+      z-index: var(--dark-display);
+      transition: opacity 1.5s ease-in-out;
     }
   }
 </style>
