@@ -28,7 +28,9 @@
   --table-row-1: #ccc;
   --table-row-2: #bcbcbc;
 
-  &.dark {
+  // use a mixin for the noscript block
+  // in the header
+  @mixin darkmode {
     --color-sitebg: rgb(55, 65, 81);
     --color-text: rgb(209, 213, 219);
     --light-display: 0;
@@ -36,6 +38,10 @@
     --table-header: #333;
     --table-row-1: #444;
     --table-row-2: #4a4a4a;
+  }
+
+  &.dark {
+    @include darkmode;
   }
 }
 html code {

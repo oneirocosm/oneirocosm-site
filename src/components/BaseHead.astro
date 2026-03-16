@@ -61,6 +61,23 @@ const { title, description, image = "/logo.png" } = Astro.props;
 <script is:inline>
   const themeLocalName = localStorage.getItem("color-theme");
   if (themeLocalName == "dark") {
-    document.getElementsByTagName( 'html' )[0].classList.add("dark");
+    document.getElementsByTagName("html")[0].classList.add("dark");
   }
 </script>
+<noscript>
+  <style lang="scss">
+    @media (prefers-color-scheme: dark) {
+      :root * {
+        // @include darkmode
+        // doesn't work because scss isn't working inside noscript
+        --color-sitebg: rgb(55, 65, 81);
+        --color-text: rgb(209, 213, 219);
+        --light-display: 0;
+        --dark-display: 1;
+        --table-header: #333;
+        --table-row-1: #444;
+        --table-row-2: #4a4a4a;
+      }
+    }
+  </style>
+</noscript>
