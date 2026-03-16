@@ -125,10 +125,11 @@ const url = Astro.url.pathname;
     margin: 0;
 
     background-color: var(--color-sitebg);
+    background: var(--color-sitebg);
     color: var(--color-text);
+    transition: color 2s ease-in-out, background 2s ease-in-out, background-color 2s ease-in-out;
 
     main {
-      background: var(--color-sitebg);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
