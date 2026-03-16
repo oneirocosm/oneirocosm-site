@@ -50,12 +50,6 @@ const url = Astro.url.pathname;
                   ? "navbar__item--current"
                   : "navbar__item"}>About Me</a
               >
-              <a
-                href="/contact/"
-                class={url === "/contact/"
-                  ? "navbar__item--current"
-                  : "navbar__item"}>Contact</a
-              >
             </div>
           </div>
           <!-- Secondary Navbar items -->
@@ -92,9 +86,6 @@ const url = Astro.url.pathname;
             </li>
             <li class="mobile-menu__line">
               <a href="/about/" class="mobile-menu__item">About Me</a>
-            </li>
-            <li class="mobile-menu__line">
-              <a href="/contact/" class="mobile-menu__item">Contact</a>
             </li>
           </ul>
         </div>
