@@ -1,4 +1,6 @@
-import { defineCollection, z } from "astro:content";
+import { defineCollection } from "astro:content";
+import { z } from "astro/zod";
+import { file } from "astro/loaders";
 
 const blog = defineCollection({
   type: "content",
@@ -13,4 +15,13 @@ const blog = defineCollection({
   }),
 });
 
-export const collections = { blog };
+const photoGridMeta = defineCollection({
+  loader: file("src/assets/photos/pumpkin-carving/meta.json"),
+  schema: z.object({
+    name: z.string(),
+    class: z.string(),
+    zoom: z.number().optional(),
+  }).optional(),
+});
+
+export const collections = { blog, photoGridMeta };

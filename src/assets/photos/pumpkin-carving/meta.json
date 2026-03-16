@@ -1,0 +1,52 @@
+{
+    "/src/assets/photos/pumpkin-carving/2020-10-23-gastly.jpg": {
+        "name": "Gastly",
+        "class": "",
+        "zoom": 1.2
+    },
+    "/src/assets/photos/pumpkin-carving/2021-10-17-chandelure.jpg": {
+        "name": "Chandelure",
+        "class": "big"
+    },
+    "/src/assets/photos/pumpkin-carving/2022-10-17-snom.jpg": {
+        "name": "Snom",
+        "class": "wide"
+    },
+    "/src/assets/photos/pumpkin-carving/2022-10-19-klawf.jpg": {
+        "name": "Klawf",
+        "class": ""
+    },
+    "/src/assets/photos/pumpkin-carving/2022-10-31-charjabug.jpg": {
+        "name": "Charjabug",
+        "class": "wide"
+    },
+    "/src/assets/photos/pumpkin-carving/2023-10-02-gengar.jpg": {
+        "name": "Gengar",
+        "class": ""
+    },
+    "/src/assets/photos/pumpkin-carving/2023-10-09-jigglypuff.jpg": {
+        "name": "Jigglypuff",
+        "class": ""
+    },
+    "/src/assets/photos/pumpkin-carving/2023-10-16-marowak-alola.jpg": {
+        "name": "Alolan Marowak",
+        "class": ""
+    },
+    "/src/assets/photos/pumpkin-carving/2024-10-14-misdreavus.jpg": {
+        "name": "Misdreavus",
+        "class": "big"
+    },
+    "/src/assets/photos/pumpkin-carving/2025-09-29-spiritomb.jpg": {
+        "name": "Spiritomb",
+        "class": ""
+    },
+    "/src/assets/photos/pumpkin-carving/2025-10-19-phantump.jpg": {
+        "name": "Phantump",
+        "class": "big",
+        "zoom": 1.3
+    },
+    "/src/assets/photos/pumpkin-carving/2025-10-30-slowbro-galar.jpg": {
+        "name": "Galarian Slowbro",
+        "class": ""
+    }
+}

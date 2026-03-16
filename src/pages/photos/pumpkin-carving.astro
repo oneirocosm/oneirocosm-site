@@ -1,8 +1,116 @@
 ---
+import type { ImageMetadata } from "astro";
+import { Image } from "astro:assets";
+import { getEntry } from "astro:content";
+
 import MainLayout from "../../layouts/MainLayout.astro";
 const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/photos/pumpkin-carving/*.{jpeg,jpg,png,gif}');
+const imageNames = Object.keys(images);
 ---
 
 <MainLayout categorySelected="">
+    <h1>Pumpkin Carving</h1>
+    <span>For the past few years, I have carved one or more Pokémon pumpkins around halloween. It's becomes something of a tradition for me, and it's just been a fun medium to work with in general. Here are all of my past carvings:</span>
+    <div class="photo-grid">
+        {
+            imageNames.map(async (imageName) => {
+                const imageData = await images[imageName]();
+                const imageMeta = await getEntry("photoGridMeta", imageName);
+                const pokemonNameRaw = imageMeta?.data?.name;
+                const extraClass = imageMeta?.data?.class ?? "";
+                const zoom = imageMeta?.data?.zoom ?? 1;
+                const pokemonAltName = pokemonNameRaw ? `the Pokémon, ${pokemonNameRaw}` : "a Pokémon";
+                const pokemonName = pokemonNameRaw ? pokemonNameRaw : "??????";
 
+                //if (!imageData) throw new Error(`"${imageName}" does not exist in glob: "src/assets/*.{jpeg,jpg,png,gif}"`);
+
+                return <div class={`image-box ${extraClass}`}>
+                    <h2 class="image-name">{pokemonName}</h2>
+                    <Image src={imageData.default} alt={`A pumpkin carving of ${pokemonAltName}.`} style={{"--zoom": zoom}}/>
+                    </div>;
+            })
+        }
+    </div>
 </MainLayout>
+
+<style lang="scss">
+    .photo-grid {
+        display: grid;
+        width: 100%;
+        height: 100%;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        grid-auto-rows: 200px;
+        grid-gap: 20px;
+        grid-auto-flow: dense;
+        padding-right: 20px;
+        margin-top: 30px;
+    }
+
+
+    .image-box {
+        object-fit: cover;
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+        transition: all .3s ease-in-out;
+        border-radius: 8px;
+        container-type: inline-size;
+
+        &.big {
+            grid-row: span 2;
+            grid-column: span 2;
+        }
+
+        &.tall {
+            grid-row: span 2;
+        }
+
+        &.wide {
+            grid-column: span 2;
+        }
+
+        display: grid;
+
+        > * {
+            grid-area: 1/1;
+        }
+
+        &:hover {
+            transform: scale(1.05);
+        }
+    }
+
+    h2 {
+        font-size: 24px;
+    }
+
+    .image-name {
+        color: rgb(209, 213, 219);
+        z-index: 1;
+        font-size: 14cqw;
+        padding: 7px;
+        opacity: 0;
+        text-shadow: 2px 2px 2px #000000; 
+        transition: opacity .9s ease-in-out;
+        white-space: pre-line;
+    }
+
+    .image-box:hover .image-name {
+        opacity: 1;
+    }
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transform: scale(var(--zoom));
+        transition: all .6s ease-in-out;
+
+    }
+
+    .image-box:hover img {
+        transform: scale(calc(var(--zoom) * 1.05));
+    }
+
+
+</style>
