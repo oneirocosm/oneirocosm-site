@@ -252,15 +252,20 @@ const url = Astro.url.pathname;
         justify-content: space-between;
         align-items: center;
         margin: 24px;
+        margin-bottom: 0px;
+        flex-grow: 1;
 
         .page-content {
           max-width: 65ch;
           width: 100%;
+          flex-grow: 1;
+          //border: 3px var(--color-text) solid;
+          //border-radius: 12px;
+          //padding: 15px;
         }
       }
 
       footer {
-        margin-top: auto;
 
         .footer-content {
           text-align: center;
