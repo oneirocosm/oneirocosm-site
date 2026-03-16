@@ -1,6 +1,8 @@
 ---
 import DarkModeSwitch from "../components/DarkModeSwitch.astro";
 import BaseHead from "../components/BaseHead.astro";
+import {getCollection} from "astro:content";
+
 const {
   categorySelected = "",
   pageName = "",
@@ -34,13 +36,13 @@ const url = Astro.url.pathname;
               >
               <a
                 href="/articles/"
-                class={url === "/articles/"
+                class={url.startsWith("/articles/")
                   ? "navbar__item--current"
                   : "navbar__item"}>Articles</a
               >
               <a
                 href="/photos/"
-                class={url === "/photos/"
+                class={url.startsWith("/photos/")
                   ? "navbar__item--current"
                   : "navbar__item"}>Photos</a
               >

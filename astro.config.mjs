@@ -8,6 +8,7 @@ import sitemap from "@astrojs/sitemap";
 export default defineConfig({
   site: "https://oneirocosm.com",
   integrations: [mdx(), sitemap()],
+  trailingSlash: "always",
   markdown: {
     shikiConfig: {
       themes: {

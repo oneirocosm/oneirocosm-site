@@ -4,6 +4,8 @@ import { Image } from "astro:assets";
 import { getEntry } from "astro:content";
 
 import MainLayout from "../../layouts/MainLayout.astro";
+const title = "Pokémon Pumpkin Carving"
+
 const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/photos/pumpkin-carving/*.{jpeg,jpg,png,gif}');
 const imageNames = Object.keys(images);
 ---
