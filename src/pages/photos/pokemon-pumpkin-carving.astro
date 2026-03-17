@@ -6,12 +6,12 @@ import { getEntry } from "astro:content";
 import MainLayout from "../../layouts/MainLayout.astro";
 const title = "Pokémon Pumpkin Carving"
 
-const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/photos/pumpkin-carving/*.{jpeg,jpg,png,gif}');
+const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/photos/pokemon-pumpkin-carving/*.{jpeg,jpg,png,gif}');
 const imageNames = Object.keys(images);
 ---
 
 <MainLayout categorySelected="">
-    <h1>Pumpkin Carving</h1>
+    <h1>Pokémon Pumpkin Carving</h1>
     <span>For the past few years, I have carved one or more Pokémon pumpkins around halloween. It's becomes something of a tradition for me, and it's just been a fun medium to work with in general. Here are all of my past carvings:</span>
     <div class="photo-grid">
         {

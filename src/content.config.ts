@@ -16,7 +16,7 @@ const blog = defineCollection({
 });
 
 const photoGridMeta = defineCollection({
-  loader: file("src/assets/photos/pumpkin-carving/meta.json"),
+  loader: file("src/assets/photos/pokemon-pumpkin-carving/meta.json"),
   schema: z.object({
     name: z.string(),
     class: z.string(),
